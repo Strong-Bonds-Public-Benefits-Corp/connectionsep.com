@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Take the Resilience Check In — anonymous, one number, one moment of honesty. Your check-in feeds the Resilience Heat Map.">
+  <title>Resilience Check In — Coffee &amp; Connections El Paso</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+<div class="page">
+
+  <nav class="nav" aria-label="Main navigation">
+    <div class="brand">Coffee &amp; Connections<small>El Paso</small></div>
+    <div class="navlinks" role="list">
+      <a href="index.html" role="listitem">Home</a>
+      <a href="our-story.html" role="listitem">Our Story</a>
+      <a href="checkin.html" role="listitem">Check In</a>
+      <a href="market.html" role="listitem">Resilience Market</a>
+      <a href="contact.html" role="listitem">Contact</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <h1>Resilience Check In</h1>
+    <p>One number. One honest moment. That's all it takes.</p>
+    <div class="promise">
+      <strong>Anonymous means anonymous — no asterisks.</strong><br>
+      Your check-in feeds the Resilience Heat Map: a living picture of how El Paso, Fort Bliss, and our college communities are really doing. No names attached. Ever.
+    </div>
+  </header>
+
+  <!-- STEP 1: ABOUT YOU -->
+  <section class="sec" aria-labelledby="about-h">
+    <div class="kicker">Step 1 of 2</div>
+    <h2 id="about-h">About you</h2>
+    <p class="body">Only your <strong>zip code</strong> is required — that's what places your check-in on the map. Everything else is yours to share or skip. You control what we know about you.</p>
+
+    <form id="checkin-form" novalidate>
+      <div class="form-grid">
+        <div class="field">
+          <label for="f-name">Name</label>
+          <input type="text" id="f-name" name="name" autocomplete="given-name" placeholder="Your first name">
+          <p class="why">We'd like to call you by your first name.</p>
+        </div>
+        <div class="field">
+          <label for="f-alias">Alias</label>
+          <input type="text" id="f-alias" name="alias" placeholder="A nickname, a callsign, anything">
+          <p class="why">If you can't share your name, what can we call you?</p>
+        </div>
+        <div class="field">
+          <label for="f-birthyear">Birth year</label>
+          <input type="number" id="f-birthyear" name="birthyear" min="1900" max="2026" placeholder="YYYY">
+          <p class="why">Lets the Heat Map show trends by age. Just the year — not your birthday.</p>
+        </div>
+        <div class="field">
+          <label for="f-zip">Zip code <span class="req" aria-hidden="true">*</span><span class="visually-hidden">(required)</span></label>
+          <input type="text" id="f-zip" name="zip" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" placeholder="79936" required aria-describedby="zip-why">
+          <p class="why" id="zip-why">Provides data for the Heat Map — we don't need your address!</p>
+          <p class="field-error" id="zip-error" role="alert" hidden>Please enter a valid 5-digit zip code.</p>
+        </div>
+        <div class="field">
+          <label for="f-race">Race / ethnicity</label>
+          <select id="f-race" name="race">
+            <option value="">Prefer not to say</option>
+            <option>American Indian or Alaska Native</option>
+            <option>Asian</option>
+            <option>Black or African American</option>
+            <option>Hispanic or Latino</option>
+            <option>Native Hawaiian or Pacific Islander</option>
+            <option>White</option>
+            <option>Two or more races</option>
+          </select>
+          <p class="why">Matters for reporting — helps us prove we're reaching everyone.</p>
+        </div>
+        <div class="field">
+          <label for="f-military">Military connection</label>
+          <select id="f-military" name="military">
+            <option value="">Prefer not to say</option>
+            <option>Active Duty</option>
+            <option>Veteran</option>
+            <option>National Guard / Reserve</option>
+            <option>Military spouse</option>
+            <option>Military family</option>
+            <option>Civilian</option>
+          </select>
+          <p class="why">Helps us connect you with veteran and active-duty resources and funding.</p>
+        </div>
+        <div class="field">
+          <label for="f-college">College</label>
+          <select id="f-college" name="college">
+            <option value="">Prefer not to say</option>
+            <option>Not a student</option>
+            <option>UTEP</option>
+            <option>EPCC</option>
+            <option>Other college</option>
+          </select>
+          <p class="why">Our college communities matter — this helps us show up for them.</p>
+        </div>
+        <div class="field">
+          <label for="f-email">Email</label>
+          <input type="email" id="f-email" name="email" autocomplete="email" placeholder="you@example.com">
+          <p class="why">Want your 10% Resilience Market code sent to you?</p>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <!-- STEP 2: THE SLIDER -->
+  <section class="sec" aria-labelledby="slider-h">
+    <div class="kicker">Step 2 of 2</div>
+    <h2 id="slider-h">How are you, really?</h2>
+    <p class="body">Slide to the number that fits. <strong>1</strong> means you're struggling. <strong>10</strong> means you're thriving. Be honest — this is for you, not for us.</p>
+    <div class="slider-wrap">
+      <div class="slider-labels" aria-hidden="true">
+        <span>1 &middot; Struggling</span>
+        <span>10 &middot; Thriving</span>
+      </div>
+      <label class="visually-hidden" for="checkin-page-slider">Resilience Check In: 1 is struggling, 10 is thriving</label>
+      <input type="range" id="checkin-page-slider" min="1" max="10" step="1" value="5">
+      <div class="score" id="checkin-page-score" aria-live="polite">5</div>
+      <p class="privacy-note">Anonymous. No account needed beyond your zip. No asterisks.</p>
+    </div>
+    <div class="cta-row">
+      <button type="button" class="btn btn-gold btn-big" id="checkin-submit">Complete my Check In</button>
+    </div>
+
+    <!-- Tiered response appears after submit -->
+    <div id="checkin-result" hidden>
+      <div class="tier crisis" id="page-tier-low" role="alert">
+        <strong>We're glad you're here.</strong>
+        <p>Right now matters more than anything else. Please reach out:</p>
+        <p><strong>988</strong> — call or text, 24/7. Veterans, press 1.<br>
+        <strong>911</strong> — if you or someone near you is in immediate danger.<br>
+        Text <strong>HOME</strong> to <strong>741741</strong> to reach a crisis counselor.</p>
+        <div class="local-resources" id="local-low"></div>
+      </div>
+      <div class="tier mid" id="page-tier-mid" role="status">
+        <strong>Let's take a minute together.</strong>
+        <p><strong>Breathe:</strong> in for 4 counts, hold for 4, out for 4. Three rounds.</p>
+        <p><strong>Ground yourself — 5-4-3-2-1:</strong> name 5 things you see, 4 you can touch, 3 you hear, 2 you smell, 1 you taste.</p>
+        <p>If the weight doesn't lift, call or text <strong>988</strong> (24/7, veterans press 1). Reaching out is strength.</p>
+        <div class="local-resources" id="local-mid"></div>
+      </div>
+      <div class="tier good" id="page-tier-high" role="status">
+        <strong>Good. Really good.</strong>
+        <p>Thriving isn't the absence of hard days — it's knowing you can meet them. Keep going. And if someone near you isn't doing as well, you know where to point them.</p>
+      </div>
+      <div class="completion" id="checkin-complete" hidden>
+        <p><strong>Thank you.</strong> Your check-in is on the map — anonymously.</p>
+        <p>Show this at the Resilience Market for <strong>10% off</strong>:<br>
+        <span class="discount-code" id="discount-code">RESILIENCE10</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOCAL RESOURCES -->
+  <section class="sec" aria-labelledby="resources-h">
+    <div class="kicker">Resources</div>
+    <h2 id="resources-h">Local support</h2>
+    <p class="body">Pick your state for local resources. We're launching with national and Texas / El Paso — more states as we verify them.</p>
+    <div class="field field-narrow">
+      <label for="state-select">State</label>
+      <select id="state-select" name="state">
+        <option value="TX" selected>Texas</option>
+        <option value="national">National / other state</option>
+      </select>
+    </div>
+    <div id="resource-list">
+      <div class="resource-card" data-states="TX national">
+        <strong>988 Suicide &amp; Crisis Lifeline</strong><br>
+        Call or text 988, 24/7. Veterans: press 1. Spanish available.
+      </div>
+      <div class="resource-card" data-states="TX national">
+        <strong>Crisis Text Line</strong><br>
+        Text HOME to 741741, 24/7.
+      </div>
+      <div class="resource-card" data-states="TX national">
+        <strong>NAMI HelpLine</strong> (not a crisis line)<br>
+        1-800-950-6264, Mon&ndash;Fri 10am&ndash;10pm ET. Peer support and resources. <em>(Pending NAMI's blessing.)</em>
+      </div>
+      <div class="resource-card" data-states="TX">
+        <strong>Emergence Health Network</strong> — El Paso<br>
+        24/7 crisis line: (915) 779-1800. Local mental health authority.
+      </div>
+    </div>
+    <p class="body"><em>More states coming as we verify local resources. No dead links — ever.</em></p>
+  </section>
+
+  <footer class="footer" id="contact">
+    <strong>Coffee &amp; Connections El Paso</strong><br>
+    hello@connectionsep.com &middot; El Paso, Texas<br>
+    Instagram &middot; Threads
+    <div class="crisis" role="note" aria-label="Crisis resources">
+      <p><strong>In crisis?</strong> Call or text <strong>988</strong> (Suicide &amp; Crisis Lifeline), 24/7. Veterans: press 1. You can also text HOME to 741741.</p>
+      <p><strong>Need support or resources?</strong> NAMI HelpLine: <strong>1-800-950-6264</strong>, Mon&ndash;Fri 10am&ndash;10pm ET. <em>(Pending NAMI's blessing.)</em></p>
+    </div>
+  </footer>
+
+</div><!-- /.page -->
+<script src="../js/main.js"></script>
+</body>
+</html>
