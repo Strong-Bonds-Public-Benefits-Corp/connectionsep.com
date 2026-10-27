@@ -1,0 +1,485 @@
+/* ============================================================
+   Coffee & Connections El Paso — Main Stylesheet
+   connectionsep.com | v01 (2026-10-16)
+   ------------------------------------------------------------
+   RULE: No CSS in HTML files. All site styling lives here.
+   Brand palette is defined once in :root — every page uses
+   these variables so the whole site stays consistent.
+   ============================================================ */
+
+:root {
+  /* Brand palette (from original site CSS) */
+  --espresso-dark: #1a0f0a;    /* page base */
+  --espresso-deep: #0f0a06;    /* footer / darkest */
+  --coffee-card: #2c1b14;      /* card surfaces */
+  --latte-cream: #fdf5e6;      /* primary text */
+  --latte-muted: #d8c9b4;      /* secondary text */
+  --coffee-accent: #4e2753;    /* deep purple — primary buttons */
+  --nami-purple: #d8b4fe;      /* light purple — dark-bg accents */
+  --gold: #d4af37;             /* gold — secondary CTAs, highlights */
+  --border: #3a2a1c;          /* section dividers */
+  --border-card: #4a3524;      /* card borders */
+  --muted-tag: #8a7a64;        /* faint labels */
+
+  /* Tiered-response backgrounds (dark-mode safe, 4.5:1+ contrast) */
+  --tier-crisis-bg: #3a1512;
+  --tier-crisis-text: #ffd9d4;
+  --tier-crisis-border: #8a3a32;
+  --tier-mid-bg: #3a2c10;
+  --tier-mid-text: #ffe9b8;
+  --tier-mid-border: #8a6f32;
+  --tier-good-bg: #123a1e;
+  --tier-good-text: #c4f0d2;
+  --tier-good-border: #2e7a44;
+
+  --radius: 12px;
+  --font: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ---------- Reset / base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { font-size: 115%; } /* bumped for readability */
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  background-color: var(--espresso-dark);
+  color: var(--latte-cream);
+  line-height: 1.75;
+}
+
+/* ---------- Layout ---------- */
+.page { max-width: 720px; margin: 0 auto; }
+
+.sec {
+  padding: 30px 24px;
+  border-top: 1px solid var(--border);
+}
+
+.kicker {
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--nami-purple);
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+h1, h2 { color: var(--latte-cream); line-height: 1.35; }
+h2 { margin: 0 0 12px; font-size: 22px; }
+
+.body {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--latte-muted);
+  margin: 0 0 14px;
+}
+.body strong { color: var(--latte-cream); }
+
+/* ---------- Nav ---------- */
+.nav {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: var(--espresso-dark);
+  border-bottom: 1px solid var(--border);
+  z-index: 5;
+}
+.brand { font-weight: 800; font-size: 16px; letter-spacing: .3px; color: var(--latte-cream); }
+.brand small {
+  display: block;
+  font-weight: 400;
+  font-size: 10px;
+  color: var(--nami-purple);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.navlinks { display: flex; gap: 14px; font-size: 13px; color: var(--latte-muted); }
+.navlinks a { color: inherit; text-decoration: none; }
+.navlinks a:hover { color: var(--latte-cream); }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  font-family: inherit;
+}
+.btn-acc { background: var(--coffee-accent); color: var(--latte-cream); }
+.btn-gold { background: var(--gold); color: var(--espresso-dark); }
+.btn-ghost {
+  background: transparent;
+  color: var(--latte-cream);
+  border: 2px solid var(--nami-purple);
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  padding: 48px 26px;
+  text-align: center;
+  background: linear-gradient(160deg, var(--espresso-dark) 0%, var(--coffee-card) 60%, var(--espresso-dark) 100%);
+}
+.hero h1 { margin: 0 0 12px; font-size: 26px; font-weight: 800; }
+.hero h1 .hl { color: var(--nami-purple); }
+.hero .attr {
+  font-size: 13px;
+  color: var(--nami-purple);
+  margin-bottom: 18px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.hero p {
+  margin: 0 auto 22px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--latte-muted);
+  max-width: 460px;
+}
+.hero .cta-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* ---------- Resilience Check In slider ---------- */
+.slider-wrap {
+  background: var(--coffee-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius);
+  padding: 22px 20px;
+  margin-top: 8px;
+}
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--nami-purple);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--gold);
+  height: 36px;
+}
+.score {
+  font-size: 38px;
+  font-weight: 800;
+  text-align: center;
+  margin: 6px 0;
+  color: var(--latte-cream);
+}
+
+/* Tiered responses — hidden until slider sets one */
+.tier {
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.65;
+  display: none;
+}
+.tier.show { display: block; }
+.tier strong { display: block; margin-bottom: 6px; font-size: 15px; }
+.tier.crisis {
+  background: var(--tier-crisis-bg);
+  color: var(--tier-crisis-text);
+  border: 1px solid var(--tier-crisis-border);
+}
+.tier.mid {
+  background: var(--tier-mid-bg);
+  color: var(--tier-mid-text);
+  border: 1px solid var(--tier-mid-border);
+}
+.tier.good {
+  background: var(--tier-good-bg);
+  color: var(--tier-good-text);
+  border: 1px solid var(--tier-good-border);
+}
+
+/* ---------- Cards (founder stories) ---------- */
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.card {
+  background: var(--coffee-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+.card h3 { margin: 0 0 8px; font-size: 16px; color: var(--latte-cream); }
+.card p { margin: 0; font-size: 13.5px; line-height: 1.65; color: var(--latte-muted); }
+
+/* ---------- Quote ---------- */
+.quote {
+  background: var(--coffee-card);
+  border-left: 4px solid var(--gold);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 26px 24px;
+  font-size: 20px;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--latte-cream);
+}
+.quote small {
+  display: block;
+  margin-top: 12px;
+  font-style: normal;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--nami-purple);
+}
+
+/* ---------- Resilience Market strip ---------- */
+.store-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: var(--coffee-card);
+  border: 1px dashed var(--gold);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+.store-strip p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--latte-muted); }
+.store-strip p strong { color: var(--latte-cream); }
+
+/* ---------- Community badges ---------- */
+.proof { display: flex; gap: 10px; flex-wrap: wrap; }
+.pbadge {
+  font-size: 13px;
+  padding: 9px 16px;
+  border: 1px solid var(--border-card);
+  border-radius: 999px;
+  background: var(--coffee-card);
+  color: var(--latte-muted);
+}
+
+/* ---------- Footer ---------- */
+.footer {
+  padding: 26px 24px;
+  background: var(--espresso-deep);
+  color: var(--latte-muted);
+  font-size: 13.5px;
+  line-height: 1.75;
+}
+.footer strong { color: var(--latte-cream); }
+.footer .crisis {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  background: var(--espresso-dark);
+}
+.footer .crisis p { margin: 6px 0; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 560px) {
+  .cards { grid-template-columns: 1fr; }
+  .navlinks { display: none; } /* hamburger comes in the real build */
+  .hero h1 { font-size: 22px; }
+  .store-strip { flex-direction: column; text-align: center; }
+}
+
+/* ---------- Read-more links ---------- */
+.read-more { margin-top: 10px; }
+.read-more a {
+  color: var(--nami-purple);
+  font-size: 13px;
+  text-decoration: none;
+}
+.read-more a:hover { text-decoration: underline; }
+
+/* ---------- Spaced body (after quotes) ---------- */
+.body-spaced { margin-top: 16px; }
+
+/* ---------- Check In page ---------- */
+.promise {
+  background: var(--nami-bg);
+  border: 1px solid var(--nami-border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin: 18px auto 0;
+  max-width: 520px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--latte-cream);
+}
+.promise strong { color: var(--gold); }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 18px;
+  margin-top: 16px;
+}
+.field { margin-bottom: 4px; }
+.field-narrow { max-width: 280px; }
+.field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--latte-cream);
+  margin-bottom: 6px;
+}
+.req { color: var(--gold); }
+.field input,
+.field select {
+  width: 100%;
+  padding: 11px 12px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1px solid var(--border-card);
+  background: #241610;
+  color: var(--latte-cream);
+  font-family: inherit;
+}
+.field input:focus,
+.field select:focus {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+  border-color: var(--gold);
+}
+.field input::placeholder { color: #8a6f5c; }
+.why {
+  font-size: 12px;
+  color: var(--nami-purple);
+  margin: 6px 0 0;
+  line-height: 1.5;
+}
+.field-error {
+  font-size: 13px;
+  color: #f0a0a0;
+  margin: 6px 0 0;
+  font-weight: 600;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.privacy-note {
+  text-align: center;
+  font-size: 12px;
+  color: var(--nami-purple);
+  margin: 8px 0 0;
+}
+.cta-row { text-align: center; margin-top: 18px; }
+.btn-big { font-size: 17px; padding: 15px 34px; }
+.completion {
+  background: var(--nami-bg);
+  border: 1px solid var(--nami-border);
+  border-radius: 10px;
+  padding: 18px;
+  margin-top: 14px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--latte-cream);
+}
+.discount-code {
+  display: inline-block;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: var(--gold);
+  border: 2px dashed var(--gold);
+  border-radius: 8px;
+  padding: 8px 20px;
+  margin-top: 8px;
+}
+.local-resources { margin-top: 10px; }
+.resource-card {
+  background: var(--coffee-card);
+  border: 1px solid var(--border-card);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--latte-cream);
+}
+.resource-card strong { color: var(--gold); }
+@media (max-width: 560px) {
+  .form-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- Resilience Market ---------- */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 22px;
+  margin-top: 8px;
+}
+.product {
+  background: var(--coffee-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.product-img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #241610;
+}
+.product h3 {
+  margin: 0;
+  font-size: 19px;
+  color: var(--latte-cream);
+}
+.product-why {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--latte-muted);
+  margin: 0;
+  flex-grow: 1;
+}
+.product-price {
+  font-size: 21px;
+  font-weight: 800;
+  color: var(--gold);
+  margin: 0;
+}
+.product .field { margin-bottom: 2px; }
+.product .field label { font-size: 12px; }
+.product .field select { font-size: 14px; padding: 9px 10px; }
+.product .btn { text-align: center; margin-top: 4px; }
+
+.product-img-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--nami-bg);
+  border: 1px dashed var(--nami-border);
+  color: var(--nami-purple);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* ---------- Contact page fixes ---------- */
+.crisis-call { font-size: 16px; margin: 10px 0 6px; }
+.crisis-number {
+  font-size: 34px;
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: 2px;
+  vertical-align: middle;
+  margin: 0 4px;
+}
+.crisis-detail { font-size: 14px; }
+.inline-strong { display: inline !important; }
+.social-link { color: var(--gold); text-decoration: none; }
+.social-link:hover { text-decoration: underline; }
