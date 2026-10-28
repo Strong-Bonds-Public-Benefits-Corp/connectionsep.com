@@ -483,3 +483,111 @@ input[type="range"] {
 .inline-strong { display: inline !important; }
 .social-link { color: var(--gold); text-decoration: none; }
 .social-link:hover { text-decoration: underline; }
+
+/* ---------- Resilience Heat Map ---------- */
+.demo-banner {
+  background: var(--coffee-card);
+  border: 1px dashed var(--gold);
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin: 18px auto 0;
+  max-width: 520px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--latte-cream);
+  text-align: left;
+}
+.demo-banner strong { color: var(--gold); }
+
+.map-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 18px;
+  margin-top: 16px;
+}
+.range-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.range-btn {
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  background: transparent;
+  color: var(--latte-muted);
+  border: 2px solid var(--border-card);
+}
+.range-btn.active {
+  background: var(--coffee-accent);
+  color: var(--latte-cream);
+  border-color: var(--coffee-accent);
+}
+.range-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.hm-stats {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--latte-cream);
+  margin: 18px 0 4px;
+}
+#heat-map {
+  height: 520px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-card);
+  margin-top: 12px;
+  background: var(--espresso-deep);
+  font-family: inherit;
+  z-index: 1;
+}
+#heat-map .leaflet-popup-content-wrapper {
+  background: var(--coffee-card);
+  color: var(--latte-cream);
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  font-family: inherit;
+}
+#heat-map .leaflet-popup-content { font-size: 14px; line-height: 1.6; margin: 14px 18px; }
+#heat-map .leaflet-popup-tip { background: var(--coffee-card); border: 1px solid var(--border-card); }
+#heat-map .leaflet-control-attribution {
+  background: rgba(26, 15, 10, 0.85);
+  color: var(--latte-muted);
+  font-size: 11px;
+}
+#heat-map .leaflet-control-attribution a { color: var(--nami-purple); }
+#heat-map .leaflet-control-zoom a {
+  background: var(--coffee-card);
+  color: var(--latte-cream);
+  border-color: var(--border-card);
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin-top: 16px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--latte-muted);
+}
+.swatch {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid var(--border-card);
+}
+.swatch[data-bucket="low"] { background: #2c1b14; }
+.swatch[data-bucket="lowmid"] { background: #4e2753; }
+.swatch[data-bucket="mid"] { background: #8a5aa6; }
+.swatch[data-bucket="highmid"] { background: #d8b4fe; }
+.swatch[data-bucket="high"] { background: #d4af37; }
+.swatch[data-bucket="suppressed"] { background: #8a8a8a; }
+@media (max-width: 560px) {
+  .map-controls { grid-template-columns: 1fr; }
+  #heat-map { height: 420px; }
+}
