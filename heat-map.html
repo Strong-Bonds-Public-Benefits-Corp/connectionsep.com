@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="The Resilience Heat Map — a living picture of how El Paso, Fort Bliss, and our college communities are really doing, built from anonymous check-ins.">
+  <title>Resilience Heat Map — Coffee &amp; Connections El Paso</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+</head>
+<body>
+<div class="page">
+
+  <nav class="nav" aria-label="Main navigation">
+    <div class="brand">Coffee &amp; Connections<small>El Paso</small></div>
+    <div class="navlinks" role="list">
+      <a href="index.html" role="listitem">Home</a>
+      <a href="our-story.html" role="listitem">Our Story</a>
+      <a href="checkin.html" role="listitem">Check In</a>
+      <a href="heat-map.html" role="listitem">Heat Map</a>
+      <a href="market.html" role="listitem">Resilience Market</a>
+      <a href="contact.html" role="listitem">Contact</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <h1>Resilience Heat Map</h1>
+    <p>A living picture of how our communities are really doing — built from anonymous check-ins, not names.</p>
+    <div class="demo-banner" role="note">
+      <strong>Demo data.</strong> This preview uses sample numbers so you can see how the map works. The live map activates when real check-ins begin flowing — and it will never show a person, only patterns.
+    </div>
+  </header>
+
+  <!-- MAP CONTROLS -->
+  <section class="sec" aria-labelledby="explore-h">
+    <div class="kicker">Explore the data</div>
+    <h2 id="explore-h">See the Borderland — and beyond</h2>
+    <p class="body">The map opens on El Paso, because that's the mission. Zoom out and you'll see every place check-ins come from. Pick a lens below and the same map re-colors to show just that group.</p>
+
+    <div class="map-controls">
+      <div class="field">
+        <label for="hm-dimension">View by</label>
+        <select id="hm-dimension" name="dimension">
+          <option value="all">All check-ins</option>
+          <option value="military">Military connection</option>
+          <option value="age">Age group</option>
+          <option value="college">College</option>
+          <option value="race">Race / ethnicity</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="hm-value">Group</label>
+        <select id="hm-value" name="value" disabled>
+          <option value="">All groups</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Time range</label>
+        <div class="range-row" role="group" aria-label="Time range">
+          <button type="button" class="range-btn" data-range="7 days">7 days</button>
+          <button type="button" class="range-btn active" data-range="30 days">30 days</button>
+          <button type="button" class="range-btn" data-range="All time">All time</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Geography</label>
+        <div class="range-row" role="group" aria-label="Geography level">
+          <button type="button" class="range-btn active" disabled>Zip</button>
+          <button type="button" class="range-btn" disabled title="Coming with real data">County (soon)</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="hm-stats" id="hm-stats" aria-live="polite"></p>
+    <p class="body" id="hm-range-label">Showing: last 30 days (demo data).</p>
+
+    <div id="heat-map" role="application" aria-label="Resilience Heat Map: circles show average check-in scores by zip code"></div>
+
+    <div class="legend" aria-label="Map legend">
+      <div class="legend-item"><span class="swatch" data-bucket="low"></span> 1&ndash;2 · Struggling</div>
+      <div class="legend-item"><span class="swatch" data-bucket="lowmid"></span> 3&ndash;4</div>
+      <div class="legend-item"><span class="swatch" data-bucket="mid"></span> 5&ndash;6</div>
+      <div class="legend-item"><span class="swatch" data-bucket="highmid"></span> 7&ndash;8</div>
+      <div class="legend-item"><span class="swatch" data-bucket="high"></span> 9&ndash;10 · Thriving</div>
+      <div class="legend-item"><span class="swatch" data-bucket="suppressed"></span> Not enough data yet</div>
+    </div>
+    <p class="body">Circle size reflects check-in volume. Color reflects the average score — 1 is struggling, 10 is thriving.</p>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="sec" aria-labelledby="how-h">
+    <div class="kicker">How it works</div>
+    <h2 id="how-h">Anonymous means anonymous — and we show our math</h2>
+    <p class="body"><strong>Zip areas need 10 or more check-ins to show. Filtered views — one age group or one military connection inside one zip — need 5 or more.</strong> Anything below that shows grey: "not enough data yet." We publish these numbers openly so you can trust what you see — and what you don't. A grey area isn't a zero. It's us refusing to guess from too few voices.</p>
+    <p class="body"><strong>What never reaches this map:</strong> names, aliases, and emails never enter the pipeline at all. Birth year becomes an age band before aggregation — the raw year never appears here. No address is ever collected; zip code is the only geography we ask for. "Prefer not to say" answers count in the overall view and in no filtered view.</p>
+    <p class="body"><strong>What the lenses mean:</strong> picking a group doesn't change the map — it filters it. The same zip areas re-color using only that group's check-ins. That's how leaders can see, for example, how veterans in one neighborhood are doing compared with everyone in that neighborhood.</p>
+    <p class="body"><strong>County view is coming.</strong> County isn't collected on the check-in; it will be derived from zip codes with a standard lookup when the real pipeline is built, and the map will gain a Zip | County toggle then.</p>
+    <p class="body"><strong>For leaders:</strong> this map shows trends, not people. It can't diagnose anyone, identify anyone, or move resources by itself — but it can show a commander, a superintendent, or a council member where support is needed early, before crisis. That's the point: catching people before crisis, not after.</p>
+  </section>
+
+  <!-- CRISIS -->
+  <section class="sec" aria-labelledby="crisis-h">
+    <div class="kicker">If you need help now</div>
+    <h2 id="crisis-h">This map shows patterns. If you're struggling, talk to a person.</h2>
+    <p class="body">Call or text <strong>988</strong> (Suicide &amp; Crisis Lifeline), 24/7. Veterans: press 1. Text <strong>HOME</strong> to <strong>741741</strong> for a crisis counselor. If you or someone near you is in immediate danger, call <strong>911</strong>.</p>
+    <div class="cta-row">
+      <a class="btn btn-gold" href="checkin.html">Take the Resilience Check In</a>
+    </div>
+  </section>
+
+  <footer class="footer" id="contact">
+    <strong>Coffee &amp; Connections El Paso</strong><br>
+    hello@connectionsep.com &middot; El Paso, Texas<br>
+    Instagram &middot; Threads
+    <div class="crisis" role="note" aria-label="Crisis resources">
+      <p><strong>In crisis?</strong> Call or text <strong>988</strong> (Suicide &amp; Crisis Lifeline), 24/7. Veterans: press 1. You can also text HOME to 741741.</p>
+      <p><strong>Need support or resources?</strong> NAMI HelpLine: <strong>1-800-950-6264</strong>, Mon&ndash;Fri 10am&ndash;10pm ET. <em>(Pending NAMI's blessing.)</em></p>
+    </div>
+  </footer>
+
+</div><!-- /.page -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
