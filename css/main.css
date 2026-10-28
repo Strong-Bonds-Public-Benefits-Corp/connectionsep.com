@@ -612,3 +612,16 @@ input[type="range"] {
   color: var(--latte-muted);
 }
 .store-divider p strong { color: var(--latte-cream); }
+
+/* ---------- Under Construction banner (market page) ---------- */
+.construction-banner {
+  background: var(--coffee-card);
+  border: 1px dashed var(--gold);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin: 24px 24px 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--latte-muted);
+}
+.construction-banner strong { color: var(--gold); }
