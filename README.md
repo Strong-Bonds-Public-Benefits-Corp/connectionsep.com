@@ -2,17 +2,17 @@
 
 ## Structure
 ```
-connectionsep.com/
-├── html/       → Page files. index.html is the homepage.
-├── css/        → ALL stylesheets. No <style> blocks in HTML, ever.
-├── js/         → ALL scripts. No inline <script> in HTML, ever.
-├── assets/     → Images, icons, fonts. (Empty until design assets are ready.)
-└── README/     → This file. Build docs live here.
+connectionsep.com/  (repo root — GitHub Pages serves from here)
+├── index.html, our-story.html, checkin.html, heat-map.html, market.html, contact.html
+├── css/main.css  → ALL stylesheets. No <style> blocks in HTML, ever.
+├── js/main.js    → ALL scripts. No inline <script> in HTML, ever.
+├── README.md     → This file.
+└── README/       → Founder Story Call Template (reference).
 ```
 
 ## Rules (Tony's)
-1. **CSS stays separate.** Every page links `../css/main.css`. Brand palette lives once in `:root` — change it there, it changes everywhere.
-2. **JS stays separate.** Every page loads `../js/main.js` at the end of `<body>`. The script bails quietly on pages without a slider.
+1. **CSS stays separate.** Every page links `css/main.css`. Brand palette lives once in `:root` — change it there, it changes everywhere.
+2. **JS stays separate.** Every page loads `js/main.js` at the end of `<body>`. The script bails quietly on pages without the elements it needs (slider, check-in form, map).
 3. **Think before building.** Debate pro/con in the side chat before execution. If it's dumb, say so — "Rank does not fix stupid" applies here too.
 4. **Accessibility is non-negotiable.** 4.5:1+ contrast, heading hierarchy, aria labels, keyboard-accessible, `aria-live` on dynamic content. This is what Lighthouse scores.
 5. **Locked copy — do not edit without approval:**
@@ -23,8 +23,13 @@ connectionsep.com/
    - Service line: "20-year U.S. Army SSG" (not 19).
    - Entity: "Strong Bonds Public Benefit Corporation."
 
-## Current state (2026-10-16)
-- Homepage (v3 "why first") approved by Tony + Marylou.
+## Current state (2026-10-27)
+- Site LIVE on GitHub Pages (github.io) since Oct 27, 2026. Custom domain connectionsep.com pending (CNAME file + Porkbun DNS).
+- Homepage (v3 "why first") approved by Tony + Marylou. Why section: shared quote + Tony's voice + Marylou's voice (Marylou signed off Oct 26).
+- Our Story: Tony + Marylou sections locked. Dawn + Vic placeholders removed Oct 26 — they return when their stories are ready.
+- Check In restructured Oct 27: Heat Map fields first (Zip required; Birth Year; Race / Ethnicity; Military Connection; Branch of service, shown only with a military connection; College; Alias), then an optional store section (First/Last name, street/city/state, phone, email) behind a hard privacy divider — store data is never used for the Heat Map and never shared, sold, or given away. Zip is the only required field.
+- Resilience Heat Map page (Leaflet + OpenStreetMap, no API key): El Paso default view, zoom out to national. Demo data only. Suppression published on the page: 10+ check-ins per zip area, 5+ per filtered view. Lenses: All, Military connection, Branch of service, Age group, College, Race / ethnicity. County view comes with the real pipeline (zip-to-county lookup, backend phase).
+- Resilience Market carries an Under Construction banner until Square checkout links, real designs/photos, and the RESILIENCE10 code are live. Products shown are placeholders for reference until then.
 - Slider is UX demo only — captures NO data. Production build wires it behind the account wall (demographics + zip) per the locked flow: Hero → Learn More → account → slider → tiered response.
 - Tiered response: 1–3 → 988/911/local; 4–6 → breathing + grounding, then 988; 7–10 → thumbs up.
 - State dropdown: national + Texas/El Paso at launch, structured for 50 states.
@@ -32,7 +37,7 @@ connectionsep.com/
 - NAMI HelpLine 1-800-950-6264 in footer is pending NAMI's blessing.
 
 ## GitHub
-Upload `html/index.html` as the repo's `index.html`, `css/main.css`, `js/main.js`. GitHub Pages serves from the repo root — keep the relative paths (`../css/`, `../js/`) or flatten to root as needed.
+Pages serves from the repo root (main branch, / root). The repo is flat: pages sit at root and reference `css/main.css` and `js/main.js` (no `../` — the old Drive html/ nesting is gone). Upload root files at root; upload `main.css` inside `css/` and `main.js` inside `js/`. Never drag a folder into the web upload — it doubles the folder name (css/css). Upload files, then read the listing back and compare it with the Structure above.
 
 ## HELD SPEC — Contact page form (Tony's call, 2026-10-25; DO NOT BUILD YET)
 Bones-first rule stands: no backend/endpoint work until frontend bones are ready. This spec is held for when the build gets there, not a task for Vic now.
