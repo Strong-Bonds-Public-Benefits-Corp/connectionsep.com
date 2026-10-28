@@ -591,3 +591,24 @@ input[type="range"] {
   .map-controls { grid-template-columns: 1fr; }
   #heat-map { height: 420px; }
 }
+
+/* ---------- Store section divider (check-in form) ---------- */
+.store-divider {
+  background: var(--coffee-card);
+  border: 1px dashed var(--gold);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin: 22px 0 4px;
+}
+.store-divider h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: var(--latte-cream);
+}
+.store-divider p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--latte-muted);
+}
+.store-divider p strong { color: var(--latte-cream); }
