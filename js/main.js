@@ -104,6 +104,24 @@
     return ok;
   }
 
+  // Branch of service only applies with a military connection.
+  // Civilians and "Prefer not to say" never see it, and a hidden
+  // Branch value is cleared so stale data can't submit.
+  var militarySelect = document.getElementById('f-military');
+  var branchWrap = document.getElementById('branch-wrap');
+  var branchSelect = document.getElementById('f-branch');
+  function toggleBranch() {
+    if (!militarySelect || !branchWrap) { return; }
+    var show = ['Active Duty', 'Veteran', 'National Guard / Reserve',
+      'Military spouse', 'Military family'].indexOf(militarySelect.value) !== -1;
+    branchWrap.hidden = !show;
+    if (!show && branchSelect) { branchSelect.value = ''; }
+  }
+  if (militarySelect) {
+    militarySelect.addEventListener('change', toggleBranch);
+    toggleBranch();
+  }
+
   // State dropdown filters resource cards (TX + national at launch)
   function filterResources() {
     if (!stateSelect) { return; }
@@ -212,6 +230,7 @@
   // ---- Demo dimension values (match the check-in form options) ----
   var VALUES = {
     military: ['Active Duty', 'Veteran', 'National Guard / Reserve', 'Military spouse', 'Military family', 'Civilian'],
+    branch: ['Army', 'Marine Corps', 'Navy', 'Air Force', 'Space Force', 'Coast Guard'],
     age: ['Under 18', '18-25', '26-35', '36-45', '46-55', '56+'],
     college: ['UTEP', 'EPCC', 'Other college', 'Not a student'],
     race: ['American Indian or Alaska Native', 'Asian', 'Black or African American', 'Hispanic or Latino', 'Native Hawaiian or Pacific Islander', 'White', 'Two or more races']
@@ -220,6 +239,7 @@
   // Demo score offsets per group (production uses real aggregates).
   var OFFSETS = {
     military: { 'Active Duty': 0.3, 'Veteran': -0.4, 'National Guard / Reserve': 0.1, 'Military spouse': -0.6, 'Military family': -0.2, 'Civilian': 0.5 },
+    branch: { 'Army': -0.2, 'Marine Corps': -0.5, 'Navy': 0.1, 'Air Force': 0.4, 'Space Force': 0.3, 'Coast Guard': 0.2 },
     age: { 'Under 18': -0.8, '18-25': -0.5, '26-35': 0.2, '36-45': 0.4, '46-55': 0.6, '56+': 0.3 },
     college: { 'UTEP': -0.3, 'EPCC': -0.1, 'Other college': 0.2, 'Not a student': 0.4 },
     race: { 'American Indian or Alaska Native': -0.5, 'Asian': 0.4, 'Black or African American': -0.3, 'Hispanic or Latino': -0.1, 'Native Hawaiian or Pacific Islander': -0.2, 'White': 0.3, 'Two or more races': 0.0 }
