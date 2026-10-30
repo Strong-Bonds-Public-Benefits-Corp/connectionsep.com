@@ -276,6 +276,9 @@ input[type="range"] {
   background: var(--espresso-dark);
 }
 .footer .crisis p { margin: 6px 0; }
+.footer .donate-line { margin-top: 14px; }
+.footer .footer-links { margin-top: 8px; }
+.footer a { color: var(--gold); }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 560px) {
