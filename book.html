@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Survivor Journal: Your Story — survivor stories, in their own words.">
+  <title>Survivor Journal: Your Story</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/book.css">
+</head>
+<body>
+<div class="wrap">
+
+  <p class="home-link"><a href="index.html">← Back to Coffee & Connections El Paso</a></p>
+
+  <header class="book-header">
+    <h1>Survivor Journal: Your Story</h1>
+    <p>Stories from survivors, in their own words — so the next person knows they are not alone.</p>
+  </header>
+
+  <!-- ================= THE BOOK ================= -->
+  <section class="book-stage" aria-label="Survivor Journal: Your Story">
+    <div class="book" id="book">
+      <div class="book-spine" aria-hidden="true"></div>
+      <article class="book-page" id="book-page" aria-live="polite">
+        <div class="page-kicker" id="page-kicker">Chapter 1</div>
+        <h2 class="page-title" id="page-title"></h2>
+        <div class="page-byline" id="page-byline"></div>
+        <div class="page-body" id="page-body"></div>
+        <div class="page-tags" id="page-tags" aria-label="Story tags"></div>
+      </article>
+    </div>
+
+    <div class="book-controls">
+      <button type="button" class="btn" id="btn-prev" aria-label="Previous story">&larr; Previous page</button>
+      <span class="page-counter" id="page-counter" aria-live="polite"></span>
+      <button type="button" class="btn" id="btn-next" aria-label="Next story">Next page &rarr;</button>
+    </div>
+
+    <nav class="chapters" aria-label="Chapters">
+      <span class="chapters-label">Chapters:</span>
+      <span id="chapter-list"></span>
+    </nav>
+    <p class="hint">Tip: use the &larr; and &rarr; keys on your keyboard to turn pages.</p>
+  </section>
+
+  <!-- ================= CHAPTER 4 AND BEYOND (from MongoDB) ================= -->
+  <section class="vault-preview" aria-labelledby="vault-h">
+    <h2 id="vault-h">Chapter 4 and beyond</h2>
+    <p>From here on, the Book pulls approved stories from MongoDB. When survivors feel brave enough
+       to complete their story in the Book and it is approved, it appears here as the next chapter.
+       The founders' short entries were removed from this preview on purpose — the longer opening
+       chapters tell the whole story, and nobody needs to appear twice.</p>
+    <article class="vault-card">
+      <div class="vault-alias">Your story could be here</div>
+      <p>Chapter 4 opens when the first community story is approved. Until then, the Book opens
+         with its three hard-coded chapters and waits — it never opens empty.</p>
+    </article>
+  </section>
+
+  <!-- ================= THE FORM ================= -->
+  <section class="form-stage" aria-labelledby="form-h">
+    <h2 id="form-h">Add your page to the Book</h2>
+    <p>Your story, your words, your choice of name. You can stay anonymous. Nothing here is published
+       until it has been reviewed — and you can ask for it to be removed at any time.</p>
+
+    <p class="form-note">Story submissions aren't open yet. When they open, your story will go to the Vault for review before appearing in the Journal — and you can ask for it to be removed at any time.</p>
+    <form id="story-form" novalidate>
+      <fieldset>
+        <legend>What should we call you?</legend>
+        <label class="choice">
+          <input type="radio" name="display" value="anonymous" checked>
+          Anonymous — no name attached
+        </label>
+        <label class="choice">
+          <input type="radio" name="display" value="alias">
+          A first name or alias:
+          <input type="text" name="alias" id="alias-input" placeholder="e.g. Alex, or a callsign" disabled>
+        </label>
+      </fieldset>
+
+      <div class="field">
+        <label for="message-input">Your story</label>
+        <textarea id="message-input" name="message" rows="7" required
+          placeholder="Write as much or as little as you want. A sentence is enough."></textarea>
+        <p class="why">Write in your own words. You do not have to include details you are not ready to share,
+           and you do not have to name anyone else.</p>
+      </div>
+
+      <fieldset>
+        <legend>Name your pain — pick the tags that fit (optional, pick as many as you need)</legend>
+        <div class="tag-grid" id="tag-grid"></div>
+        <div class="field">
+          <label for="other-tag">Another tag, in your own words (optional)</label>
+          <input type="text" id="other-tag" name="otherTag" placeholder="e.g. Betrayal">
+        </div>
+      </fieldset>
+
+      <div class="field">
+        <label for="email-input">Email, only if you want a reply (optional — never published, never attached to your story)</label>
+        <input type="email" id="email-input" name="email" placeholder="you@example.com">
+      </div>
+
+      <label class="choice consent">
+        <input type="checkbox" id="consent-input" required>
+        I agree to add my story to the Survivor Journal once it has been reviewed. I understand that my story will be public and that I can request that it be removed at any time.
+      </label>
+
+      <button type="submit" class="btn btn-submit" disabled>Story submissions open soon</button>
+      <p class="form-status" id="form-status" aria-live="polite"></p>
+    </form>
+
+    <div class="crisis" role="note" aria-label="Crisis resources">
+      <p><strong>In crisis?</strong> Call or text <strong>988</strong> (Suicide &amp; Crisis Lifeline), 24/7. Veterans: press 1.</p>
+      <p>RAINN National Sexual Assault Hotline: Text <strong>HOPE</strong> to <strong>64673</strong>, free, confidential, 24/7.</p>
+      <p>You can also text HOME to 741741. If you or someone near you is in immediate danger, call 911.</p>
+    </div>
+  </section>
+
+  <footer class="mockup-footer">
+    <p class="donate-line">If you want to support this mission, our GoFundMe can be found at: <a href="https://gofund.me/8ad5a9244">https://gofund.me/8ad5a9244</a>. Every dollar goes to build the place that will keep the door open.</p>
+    <p class="footer-links"><a href="privacy.html">Privacy</a></p>
+  </footer>
+
+</div>
+<script src="js/book.js"></script>
+</body>
+</html>
