@@ -1,0 +1,171 @@
+/* The Sanctuary Club — live styles. Standalone file (not main.css).
+   Live page will use main.css; this file approximates the site's dark brand theme
+   so the mockup reads true in discussion. */
+
+:root {
+  --espresso: #1a0f0a;
+  --coffee-card: #2c1b14;
+  --latte-cream: #fdf5e6;
+  --latte-muted: #d8c9b4;
+  --gold: #d4af37;
+  --purple: #4e2753;
+  --green: #2e7d5b;
+  --teal: #2a7f7f;
+  --border: #4a3524;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--espresso);
+  color: var(--latte-cream);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.wrap { max-width: 760px; margin: 0 auto; padding: 24px 20px 60px; }
+
+.mockup-note {
+  background: var(--coffee-card);
+  border: 1px dashed var(--gold);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--latte-cream);
+}
+.mockup-note strong { color: var(--gold); }
+
+.state-switcher {
+  margin-top: 18px;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 15px;
+  color: var(--latte-muted);
+}
+.switcher-label { color: var(--gold); margin-right: 8px; }
+.state-btn {
+  font: inherit;
+  font-size: 15px;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--latte-cream);
+  border-radius: 999px;
+  padding: 4px 14px;
+  margin: 2px 4px;
+  cursor: pointer;
+}
+.state-btn[aria-pressed="true"] { background: var(--gold); color: var(--espresso); border-color: var(--gold); }
+
+.club-header { text-align: center; padding: 30px 10px 8px; }
+.club-header h1 { font-size: 46px; line-height: 1.15; margin: 0 0 8px; }
+.club-header p { color: var(--latte-muted); margin: 0; }
+
+.status-banner {
+  margin-top: 26px;
+  padding: 24px 26px;
+  border-radius: 12px;
+  background: var(--purple);
+  border: 1px solid var(--gold);
+}
+.status-banner h2 { margin: 0 0 6px; font-size: 26px; }
+.status-banner p { margin: 0 0 14px; }
+.status-banner.closed { background: var(--coffee-card); }
+
+.btn {
+  display: inline-block;
+  font: inherit;
+  font-size: 17px;
+  background: var(--gold);
+  color: var(--espresso);
+  border: none;
+  border-radius: 999px;
+  padding: 10px 22px;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn:hover, .btn:focus-visible { filter: brightness(1.1); outline: 2px solid var(--latte-cream); outline-offset: 2px; }
+
+.sec { margin-top: 44px; }
+.sec h2 { font-size: 28px; line-height: 1.3; margin: 0 0 10px; }
+.sec p { color: var(--latte-muted); }
+.sec p strong { color: var(--latte-cream); }
+
+.track { list-style: none; padding: 0; margin: 20px 0 0; }
+.track-step {
+  background: var(--coffee-card);
+  border: 1px solid var(--border);
+  border-left: 8px solid var(--gold);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+}
+.track-step span { display: block; color: var(--latte-muted); font-size: 16px; }
+.track-step .track-badge { color: var(--latte-cream); font-weight: 700; font-size: 18px; }
+.track-step strong { display: block; margin: 2px 0; }
+.track-first { border-left-color: var(--latte-cream); }
+.track-green { border-left-color: var(--green); }
+.track-teal { border-left-color: var(--teal); }
+.track-purple { border-left-color: #d8b4fe; }
+.track-gold { border-left-color: var(--gold); }
+
+.tier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; }
+.tier-card {
+  background: var(--coffee-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+}
+.tier-card h3 { margin: 0 0 6px; font-size: 24px; }
+.tier-card h3 span { font-size: 15px; color: var(--latte-muted); font-weight: 400; }
+.tier-price { font-size: 22px; font-weight: 700; color: var(--gold); margin: 0 0 4px; }
+.tier-price span { font-size: 15px; color: var(--latte-muted); font-weight: 400; }
+.tier-banner { margin: -18px -18px 14px; padding: 14px 18px; font-size: 22px; font-weight: 700; }
+.tier-grounding { background: #d9efe6; color: #1f5c42; }
+.tier-connection { background: #efe3f5; color: #4e2753; }
+.tier-sanctuary { background: #dce8f5; color: #1f3a5c; }
+.ally-note { grid-column: span 3; font-size: 16px; color: var(--latte-muted); margin: 0; }
+.tier-tag { font-style: italic; }
+.tier-card p { margin: 0; font-size: 16px; }
+.tier-wide { grid-column: span 3; }
+
+.draft-note { font-size: 15px; color: #b8a888; margin-top: 14px; }
+
+#waitlist-form label { display: block; margin-bottom: 6px; }
+#waitlist-form input[type="email"] {
+  width: 100%;
+  font: inherit;
+  font-size: 17px;
+  background: var(--latte-cream);
+  color: var(--espresso);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+.form-status { color: var(--gold); min-height: 1.7em; }
+
+.crisis {
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-top: 44px;
+}
+.crisis p { margin: 0 0 6px; }
+.crisis p:last-child { margin-bottom: 0; }
+
+.donate-line { margin-top: 20px; }
+.donate-line a { color: var(--gold); }
+
+.mockup-footer { color: #b8a888; font-size: 14px; margin-top: 36px; text-align: center; }
+
+@media (max-width: 600px) {
+  .club-header h1 { font-size: 36px; }
+  .tier-grid { grid-template-columns: 1fr; }
+  .tier-wide, .ally-note { grid-column: span 1; }
+}
+
+.home-link { display: block; margin: 1rem 0; }
