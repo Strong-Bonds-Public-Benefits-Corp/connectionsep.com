@@ -1,0 +1,206 @@
+/* Survivor Journal: Your Story — live styles. Standalone file (not main.css).
+   Goal: an old book — worn and rough around the edges, still in good condition.
+   Parchment, deckled edges, spine stitching, stains kept faint so text stays readable. */
+
+:root {
+  --parchment: #f7ecd0;
+  --parchment-deep: #efe0b8;
+  --parchment-edge: #d9c48f;
+  --ink: #2c1b14;
+  --ink-soft: #5a4232;
+  --gold: #8a6d1f;
+  --tag-bg: #4e2753;
+  --tag-ink: #fdf5e6;
+  --paper-shadow: rgba(26, 15, 10, 0.45);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #1a0f0a;
+  color: var(--ink);
+  font-family: "Kalam", cursive, sans-serif;
+  font-size: 20px;
+  line-height: 1.7;
+}
+
+.wrap { max-width: 760px; margin: 0 auto; padding: 24px 20px 60px; }
+
+.mockup-note {
+  background: #2c1b14;
+  color: #fdf5e6;
+  border: 1px dashed #d4af37;
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.mockup-note strong { color: #d4af37; }
+
+.book-header { text-align: center; color: #fdf5e6; padding: 28px 10px 8px; }
+.book-header h1 {
+  font-family: "Caveat", cursive, sans-serif;
+  font-size: 56px;
+  line-height: 1.1;
+  margin: 0 0 6px;
+}
+.book-header p { color: #e8dcc0; font-size: 19px; margin: 0; }
+
+/* ---------- The book ---------- */
+.book-stage { margin-top: 26px; }
+
+.book {
+  position: relative;
+  background:
+    radial-gradient(ellipse 320px 180px at 18% 12%, rgba(120, 84, 30, 0.10), transparent 70%),
+    radial-gradient(ellipse 260px 200px at 85% 88%, rgba(120, 84, 30, 0.12), transparent 70%),
+    linear-gradient(160deg, var(--parchment) 0%, var(--parchment-deep) 100%);
+  border-radius: 14px 22px 22px 14px / 18px 30px 30px 18px;
+  box-shadow: 0 18px 40px var(--paper-shadow), inset 0 0 0 1px var(--parchment-edge);
+  padding: 44px 44px 40px 64px;
+  min-height: 480px;
+  perspective: 1200px;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+}
+.book.turning { transform: rotateY(-9deg) translateX(-8px); opacity: 0.35; }
+
+.book-spine {
+  position: absolute;
+  top: 0; bottom: 0; left: 26px;
+  width: 10px;
+  background: linear-gradient(90deg, rgba(90, 60, 20, 0.35), rgba(90, 60, 20, 0.05) 60%, transparent);
+  border-right: 1px dashed rgba(90, 60, 20, 0.35);
+}
+
+.page-kicker {
+  font-family: "Caveat", cursive, sans-serif;
+  font-size: 24px;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+}
+.page-title {
+  font-family: "Caveat", cursive, sans-serif;
+  font-size: 44px;
+  line-height: 1.15;
+  margin: 0 0 2px;
+}
+.page-byline { color: var(--ink-soft); font-size: 18px; margin-bottom: 18px; }
+.page-body p { margin: 0 0 16px; }
+.page-body p:last-child { margin-bottom: 0; }
+
+.page-tags { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 8px; }
+.tag {
+  display: inline-block;
+  background: var(--tag-bg);
+  color: var(--tag-ink);
+  border-radius: 999px;
+  padding: 3px 13px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.tag-sample { background: transparent; color: var(--ink-soft); border: 1px dashed var(--ink-soft); }
+
+.book-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+}
+.btn {
+  font-family: "Kalam", cursive, sans-serif;
+  font-size: 18px;
+  background: #d4af37;
+  color: #1a0f0a;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 22px;
+  cursor: pointer;
+}
+.btn:hover, .btn:focus-visible { background: #e5c455; outline: 2px solid #fdf5e6; outline-offset: 2px; }
+.btn:disabled { opacity: 0.45; cursor: default; }
+.page-counter { color: #fdf5e6; font-size: 18px; }
+
+.chapters { color: #e8dcc0; font-size: 17px; margin-top: 14px; text-align: center; }
+.chapters-label { color: #d4af37; }
+.chapter-btn {
+  background: none; border: none; cursor: pointer;
+  font-family: "Kalam", cursive, sans-serif; font-size: 17px;
+  color: #e8dcc0; text-decoration: underline; padding: 2px 6px;
+}
+.chapter-btn[aria-current="true"] { color: #d4af37; text-decoration: none; font-weight: 700; }
+.hint { color: #b8a888; font-size: 15px; text-align: center; margin: 8px 0 0; }
+
+/* ---------- Vault preview + form ---------- */
+.vault-preview, .form-stage { color: #fdf5e6; margin-top: 52px; }
+.vault-preview h2, .form-stage h2 {
+  font-family: "Caveat", cursive, sans-serif;
+  font-size: 40px; line-height: 1.15; margin: 0 0 8px;
+}
+.vault-preview p, .form-stage p { color: #e8dcc0; }
+.vault-card {
+  background: #2c1b14;
+  border: 1px solid #4a3220;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin: 16px 0;
+}
+.vault-card .vault-alias { font-family: "Caveat", cursive, sans-serif; font-size: 28px; color: #d4af37; }
+.vault-card p { color: #fdf5e6; margin: 6px 0 12px; }
+.vault-pending { font-size: 16px; color: #b8a888; }
+
+.form-stage form {
+  background: #2c1b14;
+  border: 1px solid #4a3220;
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 18px;
+}
+.form-stage fieldset { border: 1px solid #4a3220; border-radius: 8px; margin: 0 0 20px; padding: 16px; }
+.form-stage legend { color: #d4af37; padding: 0 8px; }
+.form-stage .field { margin-bottom: 20px; }
+.form-stage label { display: block; color: #fdf5e6; margin-bottom: 6px; }
+.form-stage .choice { margin-bottom: 10px; }
+.form-stage .choice input[type="radio"],
+.form-stage .choice input[type="checkbox"] { margin-right: 8px; }
+.form-stage input[type="text"],
+.form-stage input[type="email"],
+.form-stage textarea {
+  width: 100%;
+  font-family: "Kalam", cursive, sans-serif;
+  font-size: 18px;
+  background: #fdf5e6;
+  color: #2c1b14;
+  border: 1px solid #4a3220;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.form-stage input:disabled { opacity: 0.55; }
+.form-stage .why { color: #b8a888; font-size: 15px; margin: 6px 0 0; }
+.tag-grid { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-bottom: 14px; }
+.tag-grid label { display: flex; align-items: center; gap: 6px; margin: 0; font-size: 18px; }
+.btn-submit { margin-top: 4px; }
+.form-status { color: #d4af37; min-height: 1.7em; }
+
+.crisis {
+  border: 1px solid #d4af37;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-top: 24px;
+}
+.crisis p { color: #fdf5e6; margin: 0 0 6px; }
+.crisis p:last-child { margin-bottom: 0; }
+
+.mockup-footer { color: #b8a888; font-size: 15px; margin-top: 40px; text-align: center; }
+
+@media (max-width: 600px) {
+  body { font-size: 19px; }
+  .book { padding: 32px 24px 30px 44px; min-height: 0; }
+  .book-spine { left: 16px; }
+  .book-header h1 { font-size: 44px; }
+  .page-title { font-size: 36px; }
+  .book-controls { flex-wrap: wrap; justify-content: center; }
+}
+
+.home-link { display: block; margin: 1rem 0; }
