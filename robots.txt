@@ -1,0 +1,9 @@
+# Block Meta's AI training crawler only (added Nov 1, 2026).
+# meta-externalagent is the crawler Meta says collects content for training
+# foundation AI models. This is a request to compliant crawlers, not a
+# contract, and it does not stop Meta training on public Instagram/Facebook
+# posts themselves.
+# meta-externalfetcher (link previews) is intentionally NOT blocked, so
+# social sharing previews keep working.
+User-agent: meta-externalagent
+Disallow: /
