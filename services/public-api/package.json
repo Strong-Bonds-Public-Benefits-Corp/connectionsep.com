@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.3",
+    "mongodb": "^6.12.0"
+  },
+  "description": "Public API for connectionsep.com — Resilience Check In and Resilience Heat Map (Monday-critical scaffold). Reads/writes the public database (strong-bonds-public) only. Never touches the Vault.",
+  "engines": {
+    "node": ">=20"
+  },
+  "main": "src/index.js",
+  "name": "ccep-public-api",
+  "private": true,
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js"
+  },
+  "version": "0.1.0"
+}
