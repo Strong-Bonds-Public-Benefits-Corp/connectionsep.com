@@ -17,7 +17,7 @@ The Coffee & Connections El Paso website. Static HTML/CSS/JS, hosted on GitHub P
 - **No CSS or JS inside HTML files.** All styling in `css/main.css`, all behavior in `js/main.js`.
 - **Locked copy** — hero, Marylou's story, scale (1 = struggling, 10 = thriving), "Resilience Check In" / "Resilience Heat Map" naming, "20-year U.S. Army SSG" — do not edit without founder approval.
 - **Accessibility** — WCAG AA: 4.5:1+ contrast, heading hierarchy, aria labels, keyboard-accessible.
-- **Demo only** — the check-in captures NO data yet. Production wiring (account wall, Heat Map pipeline) is Vic's lane, bones-first.
+- **Live check-in (Nov 14, 2026)** — the check-in POSTs to the public API (`POST /api/check-ins`) and the Heat Map reads live aggregates (`GET /api/heat-map`). CORS on the API allows this Pages site and connectionsep.com. See `js/main.js` (`API_URL`).
 
 ## Publishing
 

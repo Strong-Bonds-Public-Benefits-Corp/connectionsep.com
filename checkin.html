@@ -173,6 +173,7 @@
     <div class="cta-row">
       <button type="button" class="btn btn-gold btn-big" id="checkin-submit">Complete my Check In</button>
     </div>
+    <p class="field-error" id="submit-error" role="alert" hidden>Something went wrong sending your check-in. Please check your connection and try again.</p>
 
     <!-- Tiered response appears after submit -->
     <div id="checkin-result" hidden>
@@ -198,8 +199,9 @@
       <div class="completion" id="checkin-complete" hidden>
         <p><strong>Thank you.</strong> Your check-in is on the map — anonymously.</p>
         <p>Show this at the Resilience Market for <strong>10% off</strong>:<br>
-        <!-- Discount-code injection point: production build replaces this text with the minted unique code. See discount-code-handoff.md. Demo shows the static placeholder. -->
+        <!-- The code below is replaced with the unique code minted by POST /api/check-ins. -->
         <span class="discount-code" id="discount-code">RESILIENCE10</span></p>
+        <p id="discount-expiry" hidden>Good through <span id="discount-expires"></span>. One code per check-in.</p>
         <p><a class="btn btn-ghost" href="heat-map.html">See the Resilience Heat Map</a></p>
       </div>
     </div>

@@ -8,10 +8,13 @@
    - 1-3  -> crisis resources (988 / 911 / local)
    - 4-6  -> breathing + grounding exercise, then 988
    - 7-10 -> thumbs up
-   NOTE: This demo captures NO data. The production build wires
-   the slider behind the account wall (demographics + zip) and
-   submits to the Resilience Heat Map pipeline.
+   NOTE: The home-page slider is a teaser only — it captures
+   no data. The real check-in lives on checkin.html.
    ============================================================ */
+
+/* API base for the live public API (Render). One constant for the
+   whole file: check-ins POST here, the Heat Map GETs here. */
+var API_URL = 'https://ccep-public-api.onrender.com';
 
 (function () {
   'use strict';
@@ -59,9 +62,11 @@
    Check In page (checkin.html):
    - Step 1: About-you form. Only zip is required.
    - Step 2: Slider (1=struggling, 10=thriving).
-   - Submit validates zip, then shows the tiered response.
-   - Demo captures NO data. Production wires to the
-     Resilience Heat Map pipeline (Vic's lane).
+   - Submit validates zip, then POSTs { score, zip, optional
+     demographics } to POST /api/check-ins. The response mints
+     one unique discount code, shown on the completion screen.
+   - Store-order fields (name, address, phone, email) are never
+     sent with a check-in.
    ============================================================ */
 (function () {
   'use strict';
@@ -81,6 +86,10 @@
   var tierMid  = document.getElementById('page-tier-mid');
   var tierHigh = document.getElementById('page-tier-high');
   var complete = document.getElementById('checkin-complete');
+  var submitError = document.getElementById('submit-error');
+  var discountCodeEl = document.getElementById('discount-code');
+  var discountExpiryEl = document.getElementById('discount-expiry');
+  var discountExpiresEl = document.getElementById('discount-expires');
   var stateSelect = document.getElementById('state-select');
 
   // Live score readout as they slide (no tier shown yet — tiers fire on submit)
@@ -143,24 +152,75 @@
       zipInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
+    if (submitError) { submitError.hidden = true; }
     hideTiers();
+
     var value = parseInt(pageSlider.value, 10);
-
-    if (value <= 3) {
-      if (tierLow) { tierLow.classList.add('show'); }
-    } else if (value <= 6) {
-      if (tierMid) { tierMid.classList.add('show'); }
-    } else {
-      if (tierHigh) { tierHigh.classList.add('show'); }
+    var body = { score: value, zip: (zipInput.value || '').trim() };
+    var birthYear = parseInt(((document.getElementById('f-birthyear') || {}).value || ''), 10);
+    if (!isNaN(birthYear)) {
+      if (birthYear < 1900 || birthYear > new Date().getFullYear()) {
+        if (submitError) {
+          submitError.textContent = 'Please enter a valid 4-digit birth year, or leave it blank.';
+          submitError.hidden = false;
+        }
+        return;
+      }
+      body.birthYear = birthYear;
     }
-    if (resultBox) {
-      resultBox.hidden = false;
-      resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-    if (complete) { complete.hidden = false; }
+    var race = ((document.getElementById('f-race') || {}).value || '');
+    if (race) { body.raceEthnicity = race; }
+    var military = ((document.getElementById('f-military') || {}).value || '');
+    if (military) { body.militaryConnection = military; }
+    var branch = ((document.getElementById('f-branch') || {}).value || '');
+    if (branch) { body.branch = branch; }
+    var college = ((document.getElementById('f-college') || {}).value || '');
+    if (college) { body.college = college; }
+    var alias = (((document.getElementById('f-alias') || {}).value || '').trim());
+    if (alias) { body.alias = alias; }
+    // Store-order fields (name, address, phone, email) are never
+    // sent with a check-in. The API strips them too, but they
+    // never leave the page at all.
 
-    // NOTE: production build POSTs { zip, score, optional demographics }
-    // to the Resilience Heat Map pipeline here. Demo stores nothing.
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending…';
+
+    fetch(API_URL + '/api/check-ins', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    }).then(function (resp) {
+      if (!resp.ok) { throw new Error('check-in failed: ' + resp.status); }
+      return resp.json();
+    }).then(function (data) {
+      if (value <= 3) {
+        if (tierLow) { tierLow.classList.add('show'); }
+      } else if (value <= 6) {
+        if (tierMid) { tierMid.classList.add('show'); }
+      } else {
+        if (tierHigh) { tierHigh.classList.add('show'); }
+      }
+      if (data.discountCode && discountCodeEl) {
+        discountCodeEl.textContent = data.discountCode;
+      }
+      if (data.expiresAt && discountExpiresEl) {
+        discountExpiresEl.textContent = new Date(data.expiresAt).toLocaleDateString('en-US', {
+          month: 'long', day: 'numeric', year: 'numeric'
+        });
+        if (discountExpiryEl) { discountExpiryEl.hidden = false; }
+      }
+      if (resultBox) {
+        resultBox.hidden = false;
+        resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      if (complete) { complete.hidden = false; }
+      submitBtn.textContent = 'Check-in complete';
+      // Button stays disabled: one check-in per visit.
+    }).catch(function () {
+      if (submitError) { submitError.hidden = false; }
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Complete my Check In';
+    });
   });
 
   // Re-validate zip as they type (clear the error once fixed)
@@ -171,19 +231,21 @@
 
 /* ============================================================
    Resilience Heat Map (heat-map.html):
-   - Leaflet + OpenStreetMap. No API key, no billing, no
-     third-party data pipeline — the map runs on static Pages.
+   - Leaflet + OpenStreetMap. No API key, no billing.
    - Default view: El Paso / Borderland. Zoom out for national.
    - One map, many lenses: the dimension dropdown FILTERS the
      same zip areas; it does not swap maps.
-   - Suppression (published openly on the page):
-     zip areas need 10+ check-ins; filtered views need 5+.
-     Below that, the area shows grey ("not enough data yet").
-   - DEMO DATA below. Production replaces the AREAS table and
-     the OFFSETS with the aggregated pipeline file (Vic's lane):
-     per zip, per dimension value: { count, avg } for cells that
-     pass suppression. Name / alias / email never enter that
-     file; birth year arrives only as an age band.
+   - LIVE DATA: this block fetches GET /api/heat-map from the
+     public API on every lens or range change. The API returns
+     one row per zip: { zip, averageScore, checkInCount,
+     suppressed, status }. Suppression (published openly on the
+     page): zip areas need 10+ check-ins; filtered views need
+     5+. Below that, the area shows grey ("not enough data
+     yet"). Name / alias / email never enter the pipeline;
+     birth year arrives only as an age band.
+   - ZIP_COORDS below is only a zip -> map-pin lookup (the API
+     returns no coordinates). A zip the API returns with no
+     entry here is counted in the totals but not drawn.
    ============================================================ */
 (function () {
   'use strict';
@@ -205,29 +267,19 @@
     return;
   }
 
-  // ---- Demo areas: [zip, lat, lng, overall average score] ----
-  // Centroids are approximate; production uses real zip boundaries.
-  var AREAS = [
-    ['79901', 31.76, -106.49, 6.8],
-    ['79902', 31.79, -106.48, 5.4],
-    ['79903', 31.77, -106.44, 4.2],
-    ['79905', 31.77, -106.42, 3.6],
-    ['79907', 31.73, -106.43, 5.9],
-    ['79912', 31.84, -106.58, 7.4],
-    ['79924', 31.92, -106.43, 6.1],
-    ['79925', 31.78, -106.37, 7.9],
-    ['79928', 31.65, -106.27, 8.3],
-    ['79930', 31.83, -106.46, 5.1],
-    ['79932', 31.88, -106.58, 6.6],
-    ['79934', 31.95, -106.40, 4.8],
-    ['79936', 31.85, -106.35, 7.1],
-    ['79938', 31.68, -106.30, 2.8],
-    // Out-of-area demo points: zoom out to see national scope.
-    ['77001', 29.76, -95.37, 6.3],
-    ['10001', 40.71, -74.01, 5.7]
-  ];
+  // ---- Zip centroids (approximate) for the map pins. ----
+  var ZIP_COORDS = {
+    '79901': [31.76, -106.49], '79902': [31.79, -106.48],
+    '79903': [31.77, -106.44], '79905': [31.77, -106.42],
+    '79907': [31.73, -106.43], '79912': [31.84, -106.58],
+    '79924': [31.92, -106.43], '79925': [31.78, -106.37],
+    '79928': [31.65, -106.27], '79930': [31.83, -106.46],
+    '79932': [31.88, -106.58], '79934': [31.95, -106.40],
+    '79936': [31.85, -106.35], '79938': [31.68, -106.30],
+    '77001': [29.76, -95.37], '10001': [40.71, -74.01]
+  };
 
-  // ---- Demo dimension values (match the check-in form options) ----
+  // ---- Dimension values (match the check-in form options) ----
   var VALUES = {
     military: ['Active Duty', 'Veteran', 'National Guard / Reserve', 'Military spouse', 'Military family', 'Civilian'],
     branch: ['Army', 'Marine Corps', 'Navy', 'Air Force', 'Space Force', 'Coast Guard'],
@@ -236,19 +288,9 @@
     race: ['American Indian or Alaska Native', 'Asian', 'Black or African American', 'Hispanic or Latino', 'Native Hawaiian or Pacific Islander', 'White', 'Two or more races']
   };
 
-  // Demo score offsets per group (production uses real aggregates).
-  var OFFSETS = {
-    military: { 'Active Duty': 0.3, 'Veteran': -0.4, 'National Guard / Reserve': 0.1, 'Military spouse': -0.6, 'Military family': -0.2, 'Civilian': 0.5 },
-    branch: { 'Army': -0.2, 'Marine Corps': -0.5, 'Navy': 0.1, 'Air Force': 0.4, 'Space Force': 0.3, 'Coast Guard': 0.2 },
-    age: { 'Under 18': -0.8, '18-25': -0.5, '26-35': 0.2, '36-45': 0.4, '46-55': 0.6, '56+': 0.3 },
-    college: { 'UTEP': -0.3, 'EPCC': -0.1, 'Other college': 0.2, 'Not a student': 0.4 },
-    race: { 'American Indian or Alaska Native': -0.5, 'Asian': 0.4, 'Black or African American': -0.3, 'Hispanic or Latino': -0.1, 'Native Hawaiian or Pacific Islander': -0.2, 'White': 0.3, 'Two or more races': 0.0 }
-  };
-
-  var THRESH_ZIP = 10;     // published on the page
-  var THRESH_FILTER = 5;   // published on the page
-  var DEMO_N_ZIP = 1000;   // demo: check-ins per zip, all view
-  var DEMO_N_FILTER = 500; // demo: check-ins per filtered cell
+  // Time range: button label -> API range parameter.
+  var RANGES = { '7 days': '7d', '30 days': '30d', 'All time': 'all' };
+  var currentRange = '30d';
 
   // Brand color scale: endpoints are exact brand colors, midpoints
   // are blends of them. No color repeats across tiers. Grey is not
@@ -262,15 +304,9 @@
   }
 
   function radiusFor(n) {
-    if (n >= 1000) { return 18; }
-    if (n >= 500) { return 15; }
+    if (n >= 100) { return 18; }
+    if (n >= 50) { return 15; }
     return 10;
-  }
-
-  function clampScore(v) {
-    if (v < 1) { return 1; }
-    if (v > 10) { return 10; }
-    return Math.round(v * 10) / 10;
   }
 
   var map = L.map('heat-map').setView([31.76, -106.49], 11);
@@ -288,56 +324,58 @@
     return { dim: dim, val: val };
   }
 
-  function render() {
-    var f = currentFilter();
+  function renderFromApi(data) {
     layer.clearLayers();
-    var shown = 0;
-    var total = 0;
-    var suppressed = 0;
+    var shown = (data.totals && data.totals.areasShown) || 0;
+    var suppressed = (data.totals && data.totals.areasSuppressed) || 0;
+    var total = (data.totals && data.totals.totalCheckIns) || 0;
+    var thresh = data.threshold || 10;
+    var f = currentFilter();
+    var lens = (f.dim === 'all') ? 'All check-ins' : f.val;
 
-    AREAS.forEach(function (a) {
-      var zip = a[0], lat = a[1], lng = a[2], base = a[3];
-      var n, avg, thresh, label;
-
-      if (f.dim === 'all') {
-        n = DEMO_N_ZIP; avg = base; thresh = THRESH_ZIP; label = 'All check-ins';
-      } else {
-        // Demo suppressed cell: 79938 + Age 56+ has only 3 check-ins,
-        // below the filtered threshold of 5 — shows grey on purpose.
-        if (zip === '79938' && f.dim === 'age' && f.val === '56+') {
-          n = 3;
-        } else {
-          n = DEMO_N_FILTER;
-        }
-        avg = clampScore(base + (OFFSETS[f.dim][f.val] || 0));
-        thresh = THRESH_FILTER; label = f.val;
-      }
-
-      if (n < thresh) {
-        suppressed += 1;
-        L.circleMarker([lat, lng], {
+    (data.zips || []).forEach(function (row) {
+      var coords = ZIP_COORDS[row.zip];
+      if (!coords) { return; } // counted in totals, not drawn
+      if (row.suppressed) {
+        L.circleMarker(coords, {
           radius: 10, color: '#8a8a8a', weight: 2, fillColor: '#8a8a8a', fillOpacity: 0.55
-        }).bindPopup('<strong>Zip ' + zip + '</strong><br>' + label +
+        }).bindPopup('<strong>Zip ' + row.zip + '</strong><br>' + lens +
           '<br>Not enough data yet — fewer than ' + thresh + ' check-ins in this view.').addTo(layer);
         return;
       }
-
-      shown += 1;
-      total += n;
-      L.circleMarker([lat, lng], {
-        radius: radiusFor(n), color: '#fdf5e6', weight: 1.5,
-        fillColor: colorFor(avg), fillOpacity: 0.85
-      }).bindPopup('<strong>Zip ' + zip + '</strong><br>' + label +
-        '<br>Average: ' + avg.toFixed(1) + ' / 10<br>' +
-        n.toLocaleString() + ' check-ins (demo)').addTo(layer);
+      L.circleMarker(coords, {
+        radius: radiusFor(row.checkInCount), color: '#fdf5e6', weight: 1.5,
+        fillColor: colorFor(row.averageScore), fillOpacity: 0.85
+      }).bindPopup('<strong>Zip ' + row.zip + '</strong><br>' + lens +
+        '<br>Average: ' + Number(row.averageScore).toFixed(1) + ' / 10<br>' +
+        Number(row.checkInCount).toLocaleString() + ' check-ins').addTo(layer);
     });
 
     if (statsEl) {
-      var lens = (f.dim === 'all') ? 'All check-ins' : f.val;
       var extra = suppressed ? ' · ' + suppressed + ' area(s) with too few check-ins to show' : '';
       statsEl.textContent = 'Showing: ' + lens + ' · ' + shown + ' areas · ' +
-        total.toLocaleString() + ' check-ins (demo data)' + extra;
+        total.toLocaleString() + ' check-ins' + extra;
     }
+  }
+
+  function fetchHeatMap() {
+    var f = currentFilter();
+    var url = API_URL + '/api/heat-map?dimension=' + encodeURIComponent(f.dim) +
+      '&range=' + encodeURIComponent(currentRange);
+    if (f.val) { url += '&value=' + encodeURIComponent(f.val); }
+    if (statsEl) { statsEl.textContent = 'Loading the live map…'; }
+    fetch(url).then(function (resp) {
+      if (!resp.ok) { throw new Error('heat map failed: ' + resp.status); }
+      return resp.json();
+    }).then(function (data) {
+      renderFromApi(data);
+      if (rangeLabel) {
+        var rangeText = (currentRange === 'all') ? 'all time' : 'last ' + currentRange.replace('d', ' days');
+        rangeLabel.textContent = 'Showing: ' + rangeText + '.';
+      }
+    }).catch(function () {
+      if (statsEl) { statsEl.textContent = 'The live map could not load. Check your connection and refresh the page.'; }
+    });
   }
 
   // Dimension dropdown rebuilds the group dropdown.
@@ -357,22 +395,20 @@
         valSelect.appendChild(o);
       });
     }
-    render();
+    fetchHeatMap();
   }
 
   if (dimSelect) { dimSelect.addEventListener('change', rebuildValues); }
-  if (valSelect) { valSelect.addEventListener('change', render); }
+  if (valSelect) { valSelect.addEventListener('change', fetchHeatMap); }
 
-  // Time-range buttons update the label; demo data is static.
+  // Time-range buttons re-fetch the live map for the new range.
   var rangeBtns = document.querySelectorAll('.range-btn[data-range]');
   rangeBtns.forEach(function (btn) {
     btn.addEventListener('click', function () {
       rangeBtns.forEach(function (b) { b.classList.remove('active'); });
       btn.classList.add('active');
-      if (rangeLabel) {
-        rangeLabel.textContent = 'Showing: last ' + btn.getAttribute('data-range') + ' (demo data).';
-      }
-      render();
+      currentRange = RANGES[btn.getAttribute('data-range')] || '30d';
+      fetchHeatMap();
     });
   });
 
