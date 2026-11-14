@@ -193,10 +193,9 @@ filtered view.
    (Nov 8, newer) folds minting into `POST /api/check-ins` and
    defines the shape as `used` / `usedAt`. This scaffold follows
    **spec v01**. The separate mint endpoint is NOT built, and the
-   frontend must use the code returned by `POST /api/check-ins`
-   (the `js/main.js` comment referencing a mint call is stale
-   against the spec — **Tony/Vic need to confirm this before
-   frontend wiring**).
+   frontend uses the code returned by `POST /api/check-ins`
+   (the `js/main.js` mint reference was removed in the Nov 14
+   frontend wiring; the check-in response is the only mint path).
 5. **The 10% discount value lives in `src/lib/codes.js`.** The spec's
    `discount_codes` shape has no discount-amount field; the 10%
    figure comes from the check-in page copy ("10% off"). It is the
@@ -280,22 +279,49 @@ filtered view.
     payment id, so support can reconcile — the money is real and
     the order must not vanish silently. The discount code is NOT
     released in that case (the payment stands).
+18. **Student tier charged once in v01 (built Nov 14).** The club's
+    student plan is $25/mo x 3, but installments need Square
+    Subscriptions — a v02 decision. In v01, tier "Student" is the
+    $75 Connection price charged once at join.
+19. **Gift-a-tier not in v01.** The 10%-off gifted membership needs
+    a recipient model the spec does not define. Not built.
+20. **No discount codes on a club join.** The spec's POST body has
+    no discountCode field; the check-in code is for the Market.
+21. **Already a member → 409.** An account with an active
+    membership gets 409 `already_member`; an expired membership
+    does not block a re-join (that is how renewal works in v01).
+    `GET /api/club-members/me` reports the EFFECTIVE status: an
+    "active" membership past its expiresAt reads as "expired"
+    without rewriting the document — a sweep job can reconcile
+    stored statuses later. `club_members` has an index on
+    `accountId` (lookups on every join and /me).
+22. **Club orders record.** The spec requires an orders record for
+    the club payment. A membership has no product and nothing
+    ships: the item carries the tier name only (no productId) and
+    shippingAddress is null. `GET /api/orders` tolerates items
+    without productId (club orders list alongside product orders).
+    Smoke-tested Nov 14 (21 checks, stubbed DB + stubbed Square):
+    join Grounding $50 / Ally Connection $127.50 / Student $75,
+    bad tier, missing sourceId, no token, Square unconfigured
+    (503, nothing written), already a member (409, no charge),
+    expired membership re-joins, decline (402, no writes), GET
+    /me active / none / expired, GET /orders lists the club order
+    — all pass.
 
-## What remains for the full build (spec v01's other 3 endpoints)
+## What remains for the full build (spec v01's other 1 endpoint)
 
 Not built here — listed so the next step is obvious:
 
-- `POST /api/club-members`, `GET /api/club-members/me` — Sanctuary
-  Club (needs Square).
 - `POST /api/bookings` — needs the book-page decision (tables,
   peer-group sessions, or both).
 
 Also remaining: rate limiting (Assumption #8), the scoped database
-user (Step 4 — move off `tonys_db_user`), automated tests, frontend
-wiring of `checkin.html` / `heat-map.html` to these endpoints
-(separate task — **the site build was not modified here**), and the
-Render rebuild + deployment (needs Tony's spec approval and the repo
-answer from spec v01's open questions).
+user (Step 4 — move off `tonys_db_user`), automated tests, and the
+club page (`club.html`) frontend wiring to these endpoints. The
+check-in / Heat Map frontend wiring landed Nov 14 (see "Frontend
+wiring" below); the API itself is deployed on Render, but a push
+does NOT auto-deploy — each API push needs a Manual Deploy in
+Render (verified Nov 14).
 
 ## Hard limits observed in this scaffold
 
@@ -343,5 +369,5 @@ test-cluster `PUBLIC_DB_URI` and was not run here.
 - CORS (`src/app.js`): allows `https://strong-bonds-public-benefits-corp.github.io`, `https://connectionsep.com`, `https://www.connectionsep.com`, and `http://localhost:*` / `http://127.0.0.1:*` for local development. Methods GET, POST, OPTIONS; headers Content-Type, Authorization. Preflight answers 204.
 - Site push (only changed files, repo root): `gh_push.py --check --source-dir ~/workspace/site-build/connectionsep.com --prefix "" --files checkin.html heat-map.html privacy.html js/main.js README.md`
 - API push (selected files): `gh_push.py --check --files src/app.js README.md`
-- A push triggers a Render deploy (branch updated) and a GitHub Pages rebuild.
+- A push triggers a GitHub Pages rebuild. Render does NOT auto-deploy on push (no GitHub App on the org repo — verified Nov 14: the CORS push sat undeployed until a Manual Deploy) — a Manual Deploy in Render is needed after each API push.
 - Still open before public launch: rate limiting on anonymous endpoints (assumption #7) — nothing enforces it yet.

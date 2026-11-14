@@ -71,7 +71,9 @@ function publicOrder(doc) {
   return {
     id: doc._id.toString(),
     items: doc.items.map((item) => ({
-      productId: item.productId.toString(),
+      // Club orders carry no productId (a membership is not a
+      // product); product orders always have one.
+      ...(item.productId ? { productId: item.productId.toString() } : {}),
       name: item.name,
       price: item.price,
       quantity: item.quantity,

@@ -7,6 +7,7 @@ const discountCodesRouter = require('./routes/discountCodes');
 const catalogRouter = require('./routes/catalog');
 const accountsRouter = require('./routes/accounts');
 const contactMessagesRouter = require('./routes/contactMessages');
+const clubMembersRouter = require('./routes/clubMembers');
 const ordersRouter = require('./routes/orders');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
 const { ping } = require('./db');
@@ -67,7 +68,7 @@ function createApp() {
       service: 'ccep-public-api',
       version: SERVICE_VERSION,
       status: 'ok',
-      endpoints: ['POST /api/check-ins', 'GET /api/heat-map', 'POST /api/discount-codes/validate', 'GET /api/products', 'GET /api/products/:id', 'GET /api/menu', 'GET /api/menu/:id', 'POST /api/accounts', 'POST /api/auth/login', 'GET /api/accounts/me', 'POST /api/contact-messages', 'POST /api/orders', 'GET /api/orders', 'GET /health'],
+      endpoints: ['POST /api/check-ins', 'GET /api/heat-map', 'POST /api/discount-codes/validate', 'GET /api/products', 'GET /api/products/:id', 'GET /api/menu', 'GET /api/menu/:id', 'POST /api/accounts', 'POST /api/auth/login', 'GET /api/accounts/me', 'POST /api/contact-messages', 'POST /api/club-members', 'GET /api/club-members/me', 'POST /api/orders', 'GET /api/orders', 'GET /health'],
     });
   });
 
@@ -88,6 +89,7 @@ function createApp() {
   app.use(catalogRouter);
   app.use(accountsRouter);
   app.use(contactMessagesRouter);
+  app.use(clubMembersRouter);
   app.use(ordersRouter);
 
   app.use(notFound);

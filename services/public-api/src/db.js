@@ -76,6 +76,10 @@ async function ensureIndexes(database) {
     { zip: 1, createdAt: -1 },
     { name: 'check_ins_zip_created' }
   );
+  await database.collection('club_members').createIndex(
+    { accountId: 1 },
+    { name: 'club_members_account' }
+  );
 }
 
 module.exports = { connect, getDb, ping, close, ensureIndexes };
