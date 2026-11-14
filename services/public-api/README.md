@@ -336,3 +336,12 @@ and failed only on the missing database):
 No live database was connected during verification. A full
 end-to-end test (real check-in → code → Heat Map read) needs a
 test-cluster `PUBLIC_DB_URI` and was not run here.
+
+## Frontend wiring (Nov 14, 2026)
+
+- The site (`~/workspace/site-build/connectionsep.com`) is wired to this API: `checkin.html` POSTs to `/api/check-ins` (`js/main.js`, `API_URL` constant), `heat-map.html` reads `/api/heat-map`, demo data removed, `privacy.html` carries the live-collection wording.
+- CORS (`src/app.js`): allows `https://strong-bonds-public-benefits-corp.github.io`, `https://connectionsep.com`, `https://www.connectionsep.com`, and `http://localhost:*` / `http://127.0.0.1:*` for local development. Methods GET, POST, OPTIONS; headers Content-Type, Authorization. Preflight answers 204.
+- Site push (only changed files, repo root): `gh_push.py --check --source-dir ~/workspace/site-build/connectionsep.com --prefix "" --files checkin.html heat-map.html privacy.html js/main.js README.md`
+- API push (selected files): `gh_push.py --check --files src/app.js README.md`
+- A push triggers a Render deploy (branch updated) and a GitHub Pages rebuild.
+- Still open before public launch: rate limiting on anonymous endpoints (assumption #7) — nothing enforces it yet.

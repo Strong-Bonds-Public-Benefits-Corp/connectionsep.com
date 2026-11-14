@@ -22,8 +22,44 @@ const SERVICE_VERSION = '0.1.0';
  * after a successful connection. Body limit is 10kb — a check-in
  * body is a few hundred bytes; anything bigger is not a check-in.
  */
+/**
+ * CORS — the site is a static GitHub Pages site on another origin,
+ * so the browser blocks its fetch calls without these headers.
+ * Allowed origins are the Pages site, the production domain, and
+ * localhost for local development. No credentials (no cookies);
+ * auth travels in the Authorization header, which is allowed.
+ * Preflight (OPTIONS) answers 204 with the same headers.
+ */
+const ALLOWED_ORIGINS = [
+  'https://strong-bonds-public-benefits-corp.github.io',
+  'https://connectionsep.com',
+  'https://www.connectionsep.com',
+];
+
+function isAllowedOrigin(origin) {
+  if (!origin) { return false; }
+  if (ALLOWED_ORIGINS.includes(origin)) { return true; }
+  return origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:');
+}
+
+function corsMiddleware(req, res, next) {
+  const origin = req.headers.origin;
+  if (origin && isAllowedOrigin(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  }
+  if (req.method === 'OPTIONS') {
+    res.status(204).end();
+    return;
+  }
+  next();
+}
+
 function createApp() {
   const app = express();
+  app.use(corsMiddleware);
   app.use(express.json({ limit: '10kb' }));
 
   app.get('/', (_req, res) => {
