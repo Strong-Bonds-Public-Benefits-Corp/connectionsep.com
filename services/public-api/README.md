@@ -282,7 +282,11 @@ filtered view.
 18. **Student tier charged once in v01 (built Nov 14).** The club's
     student plan is $25/mo x 3, but installments need Square
     Subscriptions — a v02 decision. In v01, tier "Student" is the
-    $75 Connection price charged once at join.
+    $75 Connection price charged once at join. **Tony, Nov 14:**
+    keep $75 for now, but address installments ASAP — students
+    should be able to join without the full amount up front. The
+    enrollment window is not open yet, so there is time; no site
+    wording changes.
 19. **Gift-a-tier not in v01.** The 10%-off gifted membership needs
     a recipient model the spec does not define. Not built.
 20. **No discount codes on a club join.** The spec's POST body has
