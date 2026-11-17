@@ -3,38 +3,26 @@
 ## What this is
 
 `products-20261116.json` is the first seed for the Resilience Market on
-connectionsep.com: 21 product documents, one per buyable variation, priced
-exactly as in the store (Square) on Nov 16, 2026. The market frontend
-(`market.js`) renders `imageUrl` directly, and the orders endpoint prices
-from the single `price` field on each document with no variant field — so
-every priced variation is its own document. That is deliberate, not a
-mistake: it is the only way v01 charges the exact Square price for every
-size without a backend change.
+connectionsep.com: 25 product documents, one per buyable variation, priced
+exactly as in the store (Square) on Nov 16, 2026. Every document carries
+the store's description. The market frontend (`market.js`) renders
+`imageUrl` directly, and the orders endpoint prices from the single
+`price` field on each document with no variant field — so every priced
+variation is its own document. That is deliberate, not a mistake: it is
+the only way v01 charges the exact Square price for every size without
+a backend change.
 
-## DO NOT IMPORT YET
+## READY TO IMPORT
 
-The `imageUrl` paths in this file point at images that are NOT in GitHub
-yet (`assets/products/<slug>/<slug>-1.jpg`). Importing before the images
-are pushed would render the market with broken pictures. Order of work:
+The 46 images are pushed to GitHub under `assets/products/<slug>/`
+(commit 8d08f222), and this seed file is pushed under
+`services/public-api/seed/` (commit 3220ddd7). Import now — the
+pictures resolve live. Order of work:
 
-1. Download the 46 Square product images and push them to GitHub under
-   `assets/products/<slug>/` (see "Images" below).
-2. Then import this file (script or Compass, below).
+1. ~~Download the 46 Square product images and push them to GitHub~~ — done Nov 16, 2026.
+2. Import this file (script or Compass, below).
 3. Then verify live: GET /api/products returns the products, and the
    market page renders them with images.
-
-## Still missing from this seed (do not guess)
-
-- **All the Bells and Coffee Stickers (4 sizes, $2.50–$8.50):** the
-  per-size prices were not captured — only the range. Four documents
-  are still to add once the per-size prices are read from the store.
-  Do not seed the stickers until then.
-- **Descriptions:** no `description` field on any document yet. The
-  Square descriptions were not captured in the Nov 16 check; add them
-  from the store before or after import (an update by `sku` fills
-  them in without touching anything else).
-- **Square item/variation IDs:** not captured, so not included. The
-  `sku` field below is the stable key instead.
 
 ## Images
 
@@ -103,5 +91,5 @@ curl -s https://ccep-public-api.onrender.com/api/products
 ```
 
 Allow ~60 seconds for the Render free-tier service to wake. Expect
-the 21 seeded products (25 once the Bells stickers land). Then open
-the live market page and confirm the products render with images.
+the 25 seeded products. Then open the live market page and confirm
+the products render with images.
