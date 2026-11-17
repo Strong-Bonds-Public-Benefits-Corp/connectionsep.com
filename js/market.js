@@ -39,6 +39,7 @@
   var cartDiscountRow = document.getElementById("cart-discount-row");
   var cartDiscountCodeEl = document.getElementById("cart-discount-code");
   var cartDiscountAmountEl = document.getElementById("cart-discount-amount");
+  var cartTaxAmountEl = document.getElementById("cart-tax-amount");
   var cartTotalEl = document.getElementById("cart-total");
   var checkoutForm = document.getElementById("checkout-form");
   var shipStreet = document.getElementById("ship-street");
@@ -78,6 +79,12 @@
      itself is minted server-side by the check-in only — nothing
      on this page ever creates one. */
   var STORED_CODE_KEY = "ccep_discount_code";
+  /* El Paso sales tax (Nov 17, 2026): 8.25% on the discounted
+     subtotal. Mirrors the server (src/lib/codes.js TAX_RATE_PERCENT)
+     exactly — same rounding — so the total the shopper sees is the
+     total the server charges. Display-only: the server stays the
+     source of truth. */
+  var TAX_RATE_PERCENT = 8.25;
   var products = [];          // from GET /api/products
   var byId = {};              // productId -> product
   var cart = {};              // productId -> quantity
@@ -416,6 +423,10 @@
     return Math.round((cartSubtotalCents() * discount.percent) / 100);
   }
 
+  function cartTaxCents() {
+    return Math.round(((cartSubtotalCents() - cartDiscountCents()) * TAX_RATE_PERCENT) / 100);
+  }
+
   function addToCart(id) {
     if (!byId[id]) { return; }
     cart[id] = Math.min(99, (cart[id] || 0) + 1);
@@ -493,7 +504,9 @@
       if (cartDiscountCodeEl) { cartDiscountCodeEl.textContent = discount.code; }
       if (cartDiscountAmountEl) { cartDiscountAmountEl.textContent = money(disc); }
     }
-    if (cartTotalEl) { cartTotalEl.textContent = money(subtotal - disc); }
+    var tax = cartTaxCents();
+    if (cartTaxAmountEl) { cartTaxAmountEl.textContent = money(tax); }
+    if (cartTotalEl) { cartTotalEl.textContent = money(subtotal - disc + tax); }
     refreshPlaceButton();
   }
 
@@ -503,7 +516,7 @@
     placeBtn.disabled = empty || cardFailed;
     placeBtn.textContent = empty
       ? "Your cart is empty"
-      : "Place order — " + money(cartSubtotalCents() - cartDiscountCents());
+      : "Place order — " + money(cartSubtotalCents() - cartDiscountCents() + cartTaxCents());
   }
 
   /* ---------------- Discount code ---------------- */
