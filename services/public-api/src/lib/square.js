@@ -69,10 +69,24 @@ async function createPayment({ sourceId, amountCents, idempotencyKey, locationId
     const detail = errors.length > 0 && errors[0].detail
       ? errors[0].detail
       : `Square returned HTTP ${response.status}.`;
+    // Log-only: the Square failure detail the route's generic 502
+    // hides. No secrets here — status, environment, and Square's
+    // own error code/category/detail only. No token, no card data,
+    // no sourceId.
+    console.error('[square] createPayment failed', JSON.stringify({
+      httpStatus: response.status,
+      environment,
+      errors: errors.map((e) => ({ code: e.code || null, category: e.category || null, detail: e.detail || null })),
+    }));
     throw new SquarePaymentError(detail, response.status, errors);
   }
 
   if (!json.payment || !json.payment.id) {
+    console.error('[square] createPayment failed', JSON.stringify({
+      httpStatus: response.status,
+      environment,
+      errors: [{ code: null, category: null, detail: 'Square returned a successful response without a payment.' }],
+    }));
     throw new SquarePaymentError('Square returned a successful response without a payment.', response.status, []);
   }
 

@@ -221,6 +221,9 @@ router.post('/api/orders', optionalAuth, async (req, res, next) => {
 
     // 5. Charge Square.
     const squareClient = req.app.locals.squareClient || { createPayment };
+    // Log-only: the attempt summary. The discount code itself is
+    // never logged — only whether one was applied.
+    console.log('[orders] square charge attempt', JSON.stringify({ amountCents: totalCents, hasDiscountCode: Boolean(consumedCode) }));
     let payment;
     try {
       payment = await squareClient.createPayment({
@@ -232,6 +235,22 @@ router.post('/api/orders', optionalAuth, async (req, res, next) => {
         environment: squareConfig.environment || 'sandbox',
       });
     } catch (err) {
+      // Log-only: the Square failure detail the generic 502 hides.
+      // No secrets: no token, no card data, no sourceId, no code value.
+      const squareFailure = err instanceof SquarePaymentError
+        ? {
+          httpStatus: err.httpStatus,
+          errors: err.squareErrors.map((e) => ({ code: e.code || null, category: e.category || null, detail: e.detail || null })),
+        }
+        : {
+          httpStatus: null,
+          errors: [{ code: null, category: 'network', detail: typeof err.message === 'string' ? err.message.slice(0, 200) : 'unknown error' }],
+        };
+      console.error('[orders] square charge failed', JSON.stringify({
+        amountCents: totalCents,
+        hasDiscountCode: Boolean(consumedCode),
+        ...squareFailure,
+      }));
       if (consumedCode) {
         try {
           await db.collection('discount_codes').updateOne(
