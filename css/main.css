@@ -52,6 +52,12 @@ body {
 /* ---------- Layout ---------- */
 .page { max-width: 720px; margin: 0 auto; }
 
+/* Desktop: widen the column so the site uses the screen instead of
+   sitting as a narrow strip in the middle. Phones keep 720px. */
+@media (min-width: 900px) {
+  .page { max-width: 1080px; }
+}
+
 .sec {
   padding: 30px 24px;
   border-top: 1px solid var(--border);
