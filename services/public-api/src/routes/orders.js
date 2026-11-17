@@ -3,7 +3,7 @@
 const crypto = require('node:crypto');
 const express = require('express');
 const { ObjectId } = require('mongodb');
-const { DISCOUNT_PERCENT } = require('../lib/codes');
+const { DISCOUNT_PERCENT, TAX_RATE_PERCENT } = require('../lib/codes');
 const { createPayment, SquarePaymentError } = require('../lib/square');
 const { optionalAuth } = require('../middleware/optionalAuth');
 const { requireAuth } = require('../middleware/requireAuth');
@@ -81,6 +81,8 @@ function publicOrder(doc) {
     subtotal: doc.subtotal,
     discountCode: doc.discountCode,
     discountAmount: doc.discountAmount,
+    taxAmount: doc.taxAmount,
+    taxRate: doc.taxRate,
     total: doc.total,
     squarePaymentId: doc.squarePaymentId,
     shippingAddress: doc.shippingAddress,
@@ -202,7 +204,13 @@ router.post('/api/orders', optionalAuth, async (req, res, next) => {
       return res.status(503).json({ error: 'payments_not_configured', message: 'Card payments are not set up yet.' });
     }
 
-    const totalCents = subtotalCents - discountCents;
+    // Sales tax (Nov 17, 2026): 8.25% El Paso, on the discounted
+    // subtotal, in integer cents. Square's store tax setting does
+    // not apply to API payments, so the charge must include it —
+    // otherwise the business owes it out of pocket at filing.
+    const taxableCents = subtotalCents - discountCents;
+    const taxCents = Math.round((taxableCents * TAX_RATE_PERCENT) / 100);
+    const totalCents = taxableCents + taxCents;
     if (totalCents <= 0) {
       return res.status(400).json({ error: 'validation_error', details: ['Order total must be greater than zero.'] });
     }
@@ -281,6 +289,8 @@ router.post('/api/orders', optionalAuth, async (req, res, next) => {
         subtotal: dollars(subtotalCents),
         discountCode,
         discountAmount: dollars(discountCents),
+        taxAmount: dollars(taxCents),
+        taxRate: TAX_RATE_PERCENT,
         total: dollars(totalCents),
         squarePaymentId: payment.id,
         shippingAddress,
@@ -299,6 +309,7 @@ router.post('/api/orders', optionalAuth, async (req, res, next) => {
     return res.status(201).json({
       id: inserted.insertedId.toString(),
       total: dollars(totalCents),
+      taxAmount: dollars(taxCents),
       status: 'paid',
       squarePaymentId: payment.id,
       ...(discountCode ? { discountCode } : {}),

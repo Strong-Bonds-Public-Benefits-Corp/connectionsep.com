@@ -33,6 +33,13 @@ const MAX_MINT_ATTEMPTS = 5;
 // this is the one place it changes.
 const DISCOUNT_PERCENT = 10;
 
+// El Paso sales tax on merch orders (Nov 17, 2026): Square's 8.25%
+// store tax setting does NOT apply to API payments — createPayment
+// sends an amount only — so the orders endpoint adds it server-side,
+// on the discounted subtotal, in integer cents. Club memberships
+// are dues, not taxable goods, so this rate applies to orders only.
+const TAX_RATE_PERCENT = 8.25;
+
 function generateDiscountCode() {
   const bytes = crypto.randomBytes(CODE_RANDOM_LENGTH);
   let suffix = '';
@@ -78,6 +85,7 @@ module.exports = {
   CODE_PREFIX,
   CODE_TTL_DAYS,
   DISCOUNT_PERCENT,
+  TAX_RATE_PERCENT,
   generateDiscountCode,
   mintDiscountCode,
 };
