@@ -48,7 +48,6 @@
   var shipZip = document.getElementById("ship-zip");
   var zipError = document.getElementById("zip-error");
   var discountInput = document.getElementById("discount-code");
-  var discountApply = document.getElementById("discount-apply");
   var discountRemove = document.getElementById("discount-remove");
   var discountStatus = document.getElementById("discount-status");
   var discountError = document.getElementById("discount-error");
@@ -536,10 +535,9 @@
   /* ---------------- Stored check-in code ----------------
      The "missed the check-in" button sends the shopper to the
      check-in page and back; the code they earned is remembered
-     here so the discount field is pre-filled on their return.
-     Never auto-applied — they tap Apply exactly as usual and
-     the server validates it. An expired code is dropped, not
-     pre-filled. */
+     here so the discount field is pre-filled on their return
+     and auto-applied (see autoValidateDiscount). An expired
+     code is dropped, not pre-filled. */
   function readStoredDiscountCode() {
     try {
       var raw = window.localStorage.getItem(STORED_CODE_KEY);
@@ -568,54 +566,96 @@
     show(missedCheckinBtn, !discount);
   }
 
-  if (discountApply) {
-    discountApply.addEventListener("click", function () {
-      var code = (discountInput.value || "").trim();
-      if (!code) {
-        setDiscountMessage("Enter a discount code first.", true);
-        discountInput.focus();
+  /* Auto-apply: there is no Apply button. Whenever the box
+     holds a code — typed, pasted, or pre-filled from the
+     check-in — the server validates it and the discount shows
+     in the total. A code in the box is a code the shopper
+     wants used; saving it for later means clearing the box.
+     Validation is read-only (the order consumes the code),
+     so re-checking is safe. A slow or failed check never
+     silently charges full price: the submit gate below waits
+     for the check, or stops the order. */
+  var discountCheckSeq = 0;   // guards against stale responses
+  var discountCheckPending = null; // in-flight validation promise
+
+  function autoValidateDiscount() {
+    var seq = ++discountCheckSeq;
+    var code = (discountInput.value || "").trim().toUpperCase();
+    if (!code) {
+      discount = null;
+      discountCheckPending = null;
+      setDiscountMessage("");
+      show(discountRemove, false);
+      renderCart();
+      refreshMissedCheckin();
+      return Promise.resolve();
+    }
+    if (discount && discount.code === code) {
+      return Promise.resolve();
+    }
+    setDiscountMessage("Checking your code…", false);
+    discountCheckPending = CCEPAuth.apiFetch("/api/discount-codes/validate", {
+      method: "POST",
+      body: { code: code }
+    }).then(function (r) {
+      if (seq !== discountCheckSeq) { return; } // superseded
+      if ((discountInput.value || "").trim().toUpperCase() !== code) { return; } // box changed
+      if (!r.ok) {
+        discount = null;
+        setDiscountMessage("We couldn't check that code. Try again.", true);
+        show(discountRemove, false);
+        renderCart();
+        refreshMissedCheckin();
         return;
       }
-      setDiscountMessage("");
-      discountApply.disabled = true;
-      discountApply.textContent = "Checking…";
-      CCEPAuth.apiFetch("/api/discount-codes/validate", {
-        method: "POST",
-        body: { code: code }
-      }).then(function (r) {
-        discountApply.disabled = false;
-        discountApply.textContent = "Apply";
-        if (!r.ok) {
-          setDiscountMessage("We couldn't check that code. Try again.", true);
-          return;
-        }
-        if (r.data.valid) {
-          discount = {
-            code: code.toUpperCase(),
-            percent: r.data.discountPercent,
-            expiresAt: r.data.expiresAt
-          };
-          setDiscountMessage(discount.percent + "% off applied — code " + discount.code +
-            (discount.expiresAt ? ", good through " + niceDate(discount.expiresAt) + "." : "."));
-          show(discountRemove, true);
-          discountInput.disabled = true;
-          renderCart();
-          refreshMissedCheckin();
-          return;
-        }
-        if (r.data.reason === "expired") {
-          setDiscountMessage("That code has expired" +
-            (r.data.expiresAt ? " (expired " + niceDate(r.data.expiresAt) + ")." : "."), true);
-        } else if (r.data.reason === "already_used") {
-          setDiscountMessage("That code has already been used.", true);
-        } else {
-          setDiscountMessage("We couldn't find that code. Check it and try again.", true);
-        }
-      }).catch(function () {
-        discountApply.disabled = false;
-        discountApply.textContent = "Apply";
-        setDiscountMessage("We couldn't check that code. Check your connection and try again.", true);
-      });
+      if (r.data.valid) {
+        discount = {
+          code: code,
+          percent: r.data.discountPercent,
+          expiresAt: r.data.expiresAt
+        };
+        setDiscountMessage(discount.percent + "% off applied — code " + discount.code +
+          (discount.expiresAt ? ", good through " + niceDate(discount.expiresAt) + "." : "."));
+        show(discountRemove, true);
+        renderCart();
+        refreshMissedCheckin();
+        return;
+      }
+      discount = null;
+      if (r.data.reason === "expired") {
+        setDiscountMessage("That code has expired" +
+          (r.data.expiresAt ? " (expired " + niceDate(r.data.expiresAt) + ")." : "."), true);
+      } else if (r.data.reason === "already_used") {
+        setDiscountMessage("That code has already been used.", true);
+      } else {
+        setDiscountMessage("We couldn't find that code. Check it and try again.", true);
+      }
+      show(discountRemove, false);
+      renderCart();
+      refreshMissedCheckin();
+    }).catch(function () {
+      if (seq !== discountCheckSeq) { return; }
+      if ((discountInput.value || "").trim().toUpperCase() !== code) { return; }
+      discount = null;
+      setDiscountMessage("We couldn't check that code. Check your connection and try again.", true);
+      show(discountRemove, false);
+      renderCart();
+      refreshMissedCheckin();
+    }).then(function () {
+      if (seq === discountCheckSeq) { discountCheckPending = null; }
+    });
+    return discountCheckPending;
+  }
+
+  var discountDebounce = null;
+  if (discountInput) {
+    discountInput.addEventListener("input", function () {
+      if (discountDebounce) { clearTimeout(discountDebounce); }
+      discountDebounce = setTimeout(function () { autoValidateDiscount(); }, 500);
+    });
+    discountInput.addEventListener("blur", function () {
+      if (discountDebounce) { clearTimeout(discountDebounce); discountDebounce = null; }
+      autoValidateDiscount();
     });
   }
 
@@ -827,6 +867,31 @@
         }
         return;
       }
+      var codeTyped = (discountInput.value || "").trim();
+      if (codeTyped && !discount) {
+        /* A code sits in the box but is not applied yet —
+           validation still running, or it failed. Never
+           silently charge full price: check it now, and only
+           place the order once the discount is settled. */
+        placeBtn.disabled = true;
+        placeBtn.textContent = "Checking code…";
+        autoValidateDiscount().then(function () {
+          if (!discount) {
+            placeBtn.disabled = false;
+            refreshPlaceButton();
+            if (checkoutError) {
+              checkoutError.textContent = "That discount code didn't check out — fix it, or remove it to pay full price.";
+              checkoutError.hidden = false;
+            }
+            return;
+          }
+          proceed();
+        });
+        return;
+      }
+      proceed();
+
+      function proceed() {
       placeBtn.disabled = true;
       placeBtn.textContent = "Processing…";
       var body = {
@@ -904,6 +969,7 @@
           checkoutError.hidden = false;
         }
       });
+      }
     });
   }
 
@@ -920,11 +986,15 @@
   /* ---------------- Boot ---------------- */
 
   /* Returning from the check-in (the "missed the check-in"
-     button): pre-fill the code they earned. Never auto-apply
-     — the shopper taps Apply and the server validates it. */
+     button): pre-fill the code they earned, then validate it
+     right away so the discount shows in the total without
+     any extra tap. */
   var storedCode = readStoredDiscountCode();
   if (storedCode && discountInput && !discountInput.value) {
     discountInput.value = storedCode.code;
+  }
+  if (discountInput && discountInput.value) {
+    autoValidateDiscount();
   }
   refreshMissedCheckin();
 
