@@ -22,8 +22,10 @@
    which variant document goes in the cart — the orders
    endpoint prices from that document, so the size, the price
    and the order line stay exact with no backend change.
-   Clicking a product photo opens a lightbox (zoom pop-out)
-   at the photo's natural aspect ratio.
+   Clicking a product photo opens a gallery pop-out that steps
+   through every photo of the product at its natural aspect
+   ratio. If a product document has no `images` array (old
+   data), the pop-out falls back to the single imageUrl.
    ============================================================ */
 (function () {
   "use strict";
@@ -137,58 +139,120 @@
           name: splitName(p.name).base,
           description: p.description,
           imageUrl: p.imageUrl,
+          /* Every photo of the item (seed order, card photo
+             first); null when the document predates `images`. */
+          images: (Array.isArray(p.images) && p.images.length) ? p.images.slice() : null,
           variants: []
         };
         byKey[key] = g;
         groups.push(g);
       }
       g.variants.push({ product: p, size: splitName(p.name).size || p.name });
+      if (!g.images && Array.isArray(p.images) && p.images.length) { g.images = p.images.slice(); }
       if (!g.imageUrl && p.imageUrl) { g.imageUrl = p.imageUrl; }
       if (!g.description && p.description) { g.description = p.description; }
     });
     return groups;
   }
 
-  /* ---------------- Lightbox (photo zoom pop-out) ----------------
-     One photo per product (the primary). No gallery, no
-     prev/next — the other stored photos are for a later step.
-     Created in JS so market.html needs no new markup. */
+  /* ---------------- Gallery pop-out (photo lightbox) ----------------
+     Steps through every photo of the product, from the group's
+     `images` array (seed order, card photo first). Falls back
+     to the single imageUrl when a product document has no
+     `images` array (old data) — the page never breaks. One
+     photo on the card; no thumbnail strip. Created in JS so
+     market.html needs no new markup. */
   var lightboxEl = null;
+  var lightboxImages = [];
+  var lightboxIndex = 0;
+  var lightboxImgEl = null;
+  var lightboxCounterEl = null;
 
-  function openLightbox(src, alt) {
+  function showLightboxImage() {
+    if (!lightboxImgEl || lightboxImages.length === 0) { return; }
+    lightboxImgEl.src = lightboxImages[lightboxIndex];
+    if (lightboxCounterEl) {
+      lightboxCounterEl.textContent = (lightboxIndex + 1) + " / " + lightboxImages.length;
+    }
+  }
+
+  function stepLightbox(delta) {
+    if (lightboxImages.length < 2) { return; }
+    lightboxIndex = (lightboxIndex + delta + lightboxImages.length) % lightboxImages.length;
+    showLightboxImage();
+  }
+
+  function openLightbox(images, startIndex, alt) {
     closeLightbox();
+    var list = (Array.isArray(images) && images.length) ? images.slice() : [];
+    if (list.length === 0) { return; }
+    lightboxImages = list;
+    lightboxIndex = Math.min(Math.max(startIndex || 0, 0), list.length - 1);
     var overlay = document.createElement("div");
     overlay.className = "lightbox";
     overlay.setAttribute("role", "dialog");
     overlay.setAttribute("aria-modal", "true");
-    overlay.setAttribute("aria-label", (alt || "Product photo") + " — enlarged");
+    overlay.setAttribute("aria-label", (alt || "Product photos") + " — enlarged");
     var img = document.createElement("img");
     img.className = "lightbox-img";
-    img.src = src;
     img.alt = alt || "";
+    lightboxImgEl = img;
+    var prev = null;
+    var next = null;
+    var counter = null;
+    if (list.length > 1) {
+      prev = document.createElement("button");
+      prev.type = "button";
+      prev.className = "lightbox-nav lightbox-prev";
+      prev.setAttribute("aria-label", "Previous photo");
+      prev.textContent = "‹";
+      prev.addEventListener("click", function (ev) { ev.stopPropagation(); stepLightbox(-1); });
+      next = document.createElement("button");
+      next.type = "button";
+      next.className = "lightbox-nav lightbox-next";
+      next.setAttribute("aria-label", "Next photo");
+      next.textContent = "›";
+      next.addEventListener("click", function (ev) { ev.stopPropagation(); stepLightbox(1); });
+      counter = document.createElement("span");
+      counter.className = "lightbox-counter";
+      lightboxCounterEl = counter;
+    } else {
+      lightboxCounterEl = null;
+    }
     var btn = document.createElement("button");
     btn.type = "button";
     btn.className = "lightbox-close";
-    btn.setAttribute("aria-label", "Close enlarged photo");
+    btn.setAttribute("aria-label", "Close enlarged photos");
     btn.textContent = "×";
     btn.addEventListener("click", function () { closeLightbox(); });
     overlay.addEventListener("click", function (ev) {
       if (ev.target === overlay) { closeLightbox(); }
     });
     overlay.appendChild(img);
+    if (prev) { overlay.appendChild(prev); }
+    if (next) { overlay.appendChild(next); }
+    if (counter) { overlay.appendChild(counter); }
     overlay.appendChild(btn);
     document.body.appendChild(overlay);
     lightboxEl = overlay;
+    showLightboxImage();
     if (btn.focus) { btn.focus(); }
   }
 
   function closeLightbox() {
     if (lightboxEl && lightboxEl.parentNode) { lightboxEl.parentNode.removeChild(lightboxEl); }
     lightboxEl = null;
+    lightboxImages = [];
+    lightboxIndex = 0;
+    lightboxImgEl = null;
+    lightboxCounterEl = null;
   }
 
   document.addEventListener("keydown", function (ev) {
+    if (!lightboxEl) { return; }
     if (ev.key === "Escape") { closeLightbox(); }
+    else if (ev.key === "ArrowLeft") { stepLightbox(-1); }
+    else if (ev.key === "ArrowRight") { stepLightbox(1); }
   });
 
   function renderProducts() {
@@ -209,12 +273,13 @@
         img.alt = g.name;
         img.tabIndex = 0;
         img.setAttribute("role", "button");
-        img.setAttribute("aria-label", "View a larger photo of " + g.name);
-        img.addEventListener("click", function () { openLightbox(g.imageUrl, g.name); });
+        img.setAttribute("aria-label", "View photos of " + g.name);
+        var galleryImages = g.images || (g.imageUrl ? [g.imageUrl] : []);
+        img.addEventListener("click", function () { openLightbox(galleryImages, 0, g.name); });
         img.addEventListener("keydown", function (ev) {
           if (ev.key === "Enter" || ev.key === " ") {
             ev.preventDefault();
-            openLightbox(g.imageUrl, g.name);
+            openLightbox(galleryImages, 0, g.name);
           }
         });
         article.appendChild(img);

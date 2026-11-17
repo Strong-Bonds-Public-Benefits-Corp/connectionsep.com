@@ -480,10 +480,11 @@ input[type="range"] {
 
 .product-img { cursor: zoom-in; }
 
-/* ---------- Lightbox (product photo zoom pop-out) ----------
+/* ---------- Lightbox (product photo gallery pop-out) ----------
    The card photo is cropped to a 1:1 square; the pop-out shows
-   the photo at its natural aspect ratio, constrained to the
-   viewport, so small print on a product stays readable. */
+   each photo at its natural aspect ratio, constrained to the
+   viewport, so small print on a product stays readable. The
+   ‹ › buttons step through every photo of the product. */
 .lightbox {
   position: fixed;
   inset: 0;
@@ -516,6 +517,42 @@ input[type="range"] {
   line-height: 1;
   font-weight: 800;
   cursor: pointer;
+}
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--espresso-dark);
+  font-size: 28px;
+  line-height: 1;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lightbox-prev {
+  left: 16px;
+}
+.lightbox-next {
+  right: 16px;
+}
+.lightbox-counter {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--latte-cream);
+  font-size: 14px;
+  font-weight: 700;
+  background: rgba(12, 6, 3, 0.7);
+  padding: 4px 12px;
+  border-radius: 999px;
 }
 
 /* ---------- Contact page fixes ---------- */
