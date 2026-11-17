@@ -90,7 +90,14 @@ var API_URL = 'https://ccep-public-api.onrender.com';
   var discountCodeEl = document.getElementById('discount-code');
   var discountExpiryEl = document.getElementById('discount-expiry');
   var discountExpiresEl = document.getElementById('discount-expires');
+  var backToCheckoutEl = document.getElementById('checkin-back-to-checkout');
   var stateSelect = document.getElementById('state-select');
+
+  /* The "missed the check-in" button on the checkout page
+     links here with ?return=checkout. On success the
+     completion screen offers the way back; the cart survives
+     in localStorage, so nothing is lost. */
+  var returnToCheckout = /(?:^|[?&])return=checkout(?:&|$)/.test(window.location.search || '');
 
   // Live score readout as they slide (no tier shown yet — tiers fire on submit)
   pageSlider.addEventListener('input', function () {
@@ -202,7 +209,17 @@ var API_URL = 'https://ccep-public-api.onrender.com';
       }
       if (data.discountCode && discountCodeEl) {
         discountCodeEl.textContent = data.discountCode;
+        /* Remember the minted code for the trip back to
+           checkout: the code itself is minted server-side by
+           this check-in only — nothing here creates one. */
+        try {
+          window.localStorage.setItem('ccep_discount_code', JSON.stringify({
+            code: data.discountCode,
+            expiresAt: data.expiresAt || null
+          }));
+        } catch (e) { /* private mode: the code still shows on screen */ }
       }
+      if (returnToCheckout && backToCheckoutEl) { backToCheckoutEl.hidden = false; }
       if (data.expiresAt && discountExpiresEl) {
         discountExpiresEl.textContent = new Date(data.expiresAt).toLocaleDateString('en-US', {
           month: 'long', day: 'numeric', year: 'numeric'

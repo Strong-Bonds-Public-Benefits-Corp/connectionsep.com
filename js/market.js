@@ -51,6 +51,7 @@
   var discountRemove = document.getElementById("discount-remove");
   var discountStatus = document.getElementById("discount-status");
   var discountError = document.getElementById("discount-error");
+  var missedCheckinBtn = document.getElementById("missed-checkin");
   var checkoutError = document.getElementById("checkout-error");
   var placeBtn = document.getElementById("place-order");
   var orderSuccess = document.getElementById("order-success");
@@ -71,6 +72,12 @@
   if (!grid || !window.CCEPAuth || !window.CCEPPayments) { return; }
 
   var CART_KEY = "ccep_cart";
+  /* A discount code minted by a Resilience Check In, remembered
+     so the shopper's trip back to checkout (the "missed the
+     check-in" button) doesn't make them retype it. The code
+     itself is minted server-side by the check-in only — nothing
+     on this page ever creates one. */
+  var STORED_CODE_KEY = "ccep_discount_code";
   var products = [];          // from GET /api/products
   var byId = {};              // productId -> product
   var cart = {};              // productId -> quantity
@@ -513,6 +520,41 @@
     return new Date(iso).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
   }
 
+  /* ---------------- Stored check-in code ----------------
+     The "missed the check-in" button sends the shopper to the
+     check-in page and back; the code they earned is remembered
+     here so the discount field is pre-filled on their return.
+     Never auto-applied — they tap Apply exactly as usual and
+     the server validates it. An expired code is dropped, not
+     pre-filled. */
+  function readStoredDiscountCode() {
+    try {
+      var raw = window.localStorage.getItem(STORED_CODE_KEY);
+      if (!raw) { return null; }
+      var parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed.code !== "string" || !parsed.code.trim()) { return null; }
+      if (parsed.expiresAt) {
+        var exp = Date.parse(parsed.expiresAt);
+        if (!isNaN(exp) && exp < Date.now()) {
+          try { window.localStorage.removeItem(STORED_CODE_KEY); } catch (e) {}
+          return null;
+        }
+      }
+      return parsed;
+    } catch (e) { return null; }
+  }
+
+  function clearStoredDiscountCode() {
+    try { window.localStorage.removeItem(STORED_CODE_KEY); } catch (e) {}
+  }
+
+  function refreshMissedCheckin() {
+    /* The button is a shortcut TO the check-in, never around
+       it: once a discount is applied there is nothing left
+       to fetch, so it hides until the code is removed. */
+    show(missedCheckinBtn, !discount);
+  }
+
   if (discountApply) {
     discountApply.addEventListener("click", function () {
       var code = (discountInput.value || "").trim();
@@ -545,6 +587,7 @@
           show(discountRemove, true);
           discountInput.disabled = true;
           renderCart();
+          refreshMissedCheckin();
           return;
         }
         if (r.data.reason === "expired") {
@@ -571,6 +614,7 @@
       show(discountRemove, false);
       setDiscountMessage("");
       renderCart();
+      refreshMissedCheckin();
     });
   }
 
@@ -820,8 +864,13 @@
                   ? " Your login had expired, so this order was placed as a guest."
                   : " It will ship to " + street + ", " + city + ", " + state + " " + (shipZip.value || "").trim() + ".");
             }
+            /* A discount code is consumed by the order — the
+               remembered copy is now dead, so drop it rather
+               than pre-filling a used code on the next visit. */
+            var hadDiscount = !!discount;
             cart = {};
             discount = null;
+            if (hadDiscount) { clearStoredDiscountCode(); }
             saveCart();
             renderCart();
             show(checkoutForm, false);
@@ -850,11 +899,21 @@
       show(orderSuccess, false);
       show(checkoutForm, true);
       renderCart();
+      refreshMissedCheckin();
       scrollToEl(document.getElementById("cart-section"), "start");
     });
   }
 
   /* ---------------- Boot ---------------- */
+
+  /* Returning from the check-in (the "missed the check-in"
+     button): pre-fill the code they earned. Never auto-apply
+     — the shopper taps Apply and the server validates it. */
+  var storedCode = readStoredDiscountCode();
+  if (storedCode && discountInput && !discountInput.value) {
+    discountInput.value = storedCode.code;
+  }
+  refreshMissedCheckin();
 
   loadCart();
   renderCart();

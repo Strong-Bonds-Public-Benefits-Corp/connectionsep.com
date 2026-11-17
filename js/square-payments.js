@@ -50,6 +50,11 @@
 
   /* Card input styling. 'dark' matches the market's dark
      forms; 'light' matches the club page's light inputs.
+     Square's style validator only accepts web-safe font
+     stacks — the site's Open Sans stack ('Open Sans',
+     -apple-system, Roboto, ...) is rejected with
+     InvalidInputStyleValueError, so the card form uses the
+     web-safe stack from Square's own styling sample instead.
      If Square ever rejects the style object, the card still
      renders with its default look — styling never blocks
      payment. */
@@ -59,7 +64,7 @@
         input: {
           backgroundColor: '#fdf5e6',
           color: '#1a0f0a',
-          fontFamily: "'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+          fontFamily: 'helvetica neue, sans-serif',
           fontSize: '17px'
         },
         '.input-container': { borderColor: '#4a3524', borderRadius: '8px' },
@@ -73,7 +78,7 @@
       input: {
         backgroundColor: '#241610',
         color: '#fdf5e6',
-        fontFamily: "'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+        fontFamily: 'helvetica neue, sans-serif',
         fontSize: '15px'
       },
       '.input-container': { borderColor: '#4a3524', borderRadius: '8px' },
