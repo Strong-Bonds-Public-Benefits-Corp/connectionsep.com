@@ -210,10 +210,24 @@ filtered view.
 7. **Spec examples vs form labels.** The spec's `militaryConnection`
    examples are lowercase paraphrases; the code accepts the form's
    title-case labels (`Active Duty`, `Veteran`, …).
-8. **No rate limiting yet.** The handoff design calls for light
-   rate-limiting on minting (429). Not implemented here — flagged
-   as remaining work before public launch (an anonymous endpoint
-   with no limit can be spammed, which would skew the map).
+8. **Rate limiting — implemented Nov 17 (pre-launch requirement).**
+   In-memory fixed-window limiters (`src/middleware/rateLimit.js`,
+   no new dependency — the service runs as one Render instance).
+   Per client IP (app.js trusts exactly one proxy hop so `req.ip`
+   is the real client behind Render's router); over-limit answers
+   429 `{ error: 'rate_limited', message }` with a `Retry-After`
+   header. Limits are generous on purpose — a real user doing a
+   handful of check-ins, code validates and orders is never
+   blocked; the limits stop spam and brute force.
+   | Limiter | Applies to | Limit |
+   |---|---|---|
+   | `api` | every `/api` call | 300 / 15 min / IP |
+   | `write` | check-ins, code validation, orders, signups, contact messages, club joins | 60 / 15 min / IP |
+   | `auth-login` | `POST /api/auth/login` only | 10 / 15 min / IP |
+   `/` and `/health` stay unlimited. Tests:
+   `npm test` (`test/rate-limit.test.js`, 15 checks, no database).
+   If the service ever scales past one instance, the store must
+   move to a shared store (Redis or the database).
 9. **Auth is built (Nov 14).** `JWT_SECRET` is now REQUIRED at
    startup — it signs login tokens. Passwords are bcrypt-hashed
    (12 rounds); tokens are HS256 JWTs, 7-day expiry; minimum
@@ -222,8 +236,8 @@ filtered view.
    password, so the API cannot be used to probe which accounts
    exist. `GET /api/accounts/me` loads the account from the token
    on every call, so a deleted account's token stops working.
-   Rate limiting on login/signup is still missing (Assumption #8
-   applies here too).
+   Login is rate-limited (10 attempts / 15 min / IP, see
+   Assumption #8); signup sits on the write limiter (60).
 10. **Mint failure after insert.** If code minting fails after the
     check-in is stored (database error), the check-in still counts
     on the map and the caller gets a 500. The check-in is never
@@ -319,9 +333,8 @@ Not built here — listed so the next step is obvious:
 - `POST /api/bookings` — needs the book-page decision (tables,
   peer-group sessions, or both).
 
-Also remaining: rate limiting (Assumption #8), the scoped database
-user (Step 4 — move off `tonys_db_user`), automated tests, and the
-club page (`club.html`) frontend wiring to these endpoints. The
+Also remaining: automated tests beyond the rate-limit suite, and
+the club page (`club.html`) frontend wiring to these endpoints. The
 check-in / Heat Map frontend wiring landed Nov 14 (see "Frontend
 wiring" below); the API itself is deployed on Render, but a push
 does NOT auto-deploy — each API push needs a Manual Deploy in
@@ -374,4 +387,7 @@ test-cluster `PUBLIC_DB_URI` and was not run here.
 - Site push (only changed files, repo root): `gh_push.py --check --source-dir ~/workspace/site-build/connectionsep.com --prefix "" --files checkin.html heat-map.html privacy.html js/main.js README.md`
 - API push (selected files): `gh_push.py --check --files src/app.js README.md`
 - A push triggers a GitHub Pages rebuild. Render does NOT auto-deploy on push (no GitHub App on the org repo — verified Nov 14: the CORS push sat undeployed until a Manual Deploy) — a Manual Deploy in Render is needed after each API push.
-- Still open before public launch: rate limiting on anonymous endpoints (assumption #7) — nothing enforces it yet.
+- Still open before public launch: the scoped database user is
+  done (Render runs as `public-backend` since Nov 17 12:19); the
+  bookings endpoint still needs its decision. Rate limiting
+  landed Nov 17 (see Assumption #8).

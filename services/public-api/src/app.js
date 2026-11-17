@@ -10,6 +10,7 @@ const contactMessagesRouter = require('./routes/contactMessages');
 const clubMembersRouter = require('./routes/clubMembers');
 const ordersRouter = require('./routes/orders');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
+const { apiLimiter, writeLimiter, authLimiter } = require('./middleware/rateLimit');
 const { ping } = require('./db');
 
 const SERVICE_VERSION = '0.1.0';
@@ -60,6 +61,13 @@ function corsMiddleware(req, res, next) {
 
 function createApp() {
   const app = express();
+
+  // Render terminates TLS at its router and forwards the real client
+  // IP in X-Forwarded-For. Trust exactly one proxy hop so req.ip is
+  // that client — per-IP rate limiting depends on it. Without this,
+  // every visitor would share the router's address and one bucket.
+  app.set('trust proxy', 1);
+
   app.use(corsMiddleware);
   app.use(express.json({ limit: '10kb' }));
 
@@ -82,6 +90,27 @@ function createApp() {
       time: new Date().toISOString(),
     });
   });
+
+  // Rate limiting — mounted before the routers, after CORS, so a
+  // preflight OPTIONS is answered by corsMiddleware and never
+  // counted. / and /health are not under /api and stay unlimited
+  // (health checks must never be throttled).
+  //   apiLimiter:   every /api call, 300 / 15 min / IP.
+  //   writeLimiter: writes (check-ins, code validation, orders,
+  //                 signups, contact messages, club joins),
+  //                 60 / 15 min / IP. Mounted by path prefix, so it
+  //                 also covers GET /api/orders and
+  //                 GET /api/accounts/me — both are generous at 60.
+  //   authLimiter:  POST /api/auth/login only, 10 / 15 min / IP
+  //                 (brute-force protection).
+  app.use('/api', apiLimiter);
+  app.use('/api/check-ins', writeLimiter);
+  app.use('/api/discount-codes/validate', writeLimiter);
+  app.use('/api/orders', writeLimiter);
+  app.use('/api/accounts', writeLimiter);
+  app.use('/api/contact-messages', writeLimiter);
+  app.use('/api/club-members', writeLimiter);
+  app.use('/api/auth/login', authLimiter);
 
   app.use(checkInsRouter);
   app.use(heatMapRouter);
