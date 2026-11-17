@@ -6,7 +6,13 @@
     "sku": "stickers-bells-3x4in",
     "category": "Merch",
     "imageUrl": "assets/products/bells-coffee-stickers/bells-coffee-stickers-1.jpg",
-    "available": true
+    "available": true,
+    "images": [
+      "assets/products/bells-coffee-stickers/bells-coffee-stickers-1.jpg",
+      "assets/products/bells-coffee-stickers/bells-coffee-stickers-2.jpg",
+      "assets/products/bells-coffee-stickers/bells-coffee-stickers-3.jpg",
+      "assets/products/bells-coffee-stickers/bells-coffee-stickers-4.jpg"
+    ]
   },
   {
     "name": "All the Bells and Coffee Stickers \u2014 4x6 in",
@@ -15,7 +21,13 @@
     "sku": "stickers-bells-4x6in",
     "category": "Merch",
     "imageUrl": "assets/products/bells-coffee-stickers/bells-coffee-stickers-1.jpg",
-    "available": true
+    "available": true,
+    "images": [
+      "assets/products/bells-coffee-stickers/bells-coffee-stickers-1.jpg",
+      "assets/products/bells-coffee-stickers/bells-coffee-stickers-2.jpg",
+      "assets/products/bells-coffee-stickers/bells-coffee-stickers-3.jpg",
+      "assets/products/bells-coffee-stickers/bells-coffee-stickers-4.jpg"
+    ]
   },
   {
     "name": "All the Bells and Coffee Stickers \u2014 6x8 in",
@@ -24,7 +36,13 @@
     "sku": "stickers-bells-6x8in",
     "category": "Merch",
     "imageUrl": "assets/products/bells-coffee-stickers/bells-coffee-stickers-1.jpg",
-    "available": true
+    "available": true,
+    "images": [
+      "assets/products/bells-coffee-stickers/bells-coffee-stickers-1.jpg",
+      "assets/products/bells-coffee-stickers/bells-coffee-stickers-2.jpg",
+      "assets/products/bells-coffee-stickers/bells-coffee-stickers-3.jpg",
+      "assets/products/bells-coffee-stickers/bells-coffee-stickers-4.jpg"
+    ]
   },
   {
     "name": "All the Bells and Coffee Stickers \u2014 8x10 in",
@@ -33,16 +51,28 @@
     "sku": "stickers-bells-8x10in",
     "category": "Merch",
     "imageUrl": "assets/products/bells-coffee-stickers/bells-coffee-stickers-1.jpg",
-    "available": true
+    "available": true,
+    "images": [
+      "assets/products/bells-coffee-stickers/bells-coffee-stickers-1.jpg",
+      "assets/products/bells-coffee-stickers/bells-coffee-stickers-2.jpg",
+      "assets/products/bells-coffee-stickers/bells-coffee-stickers-3.jpg",
+      "assets/products/bells-coffee-stickers/bells-coffee-stickers-4.jpg"
+    ]
   },
   {
     "available": true,
     "category": "Merch",
-    "imageUrl": "assets/products/break-the-stigma-bottle/break-the-stigma-bottle-1.jpg",
+    "imageUrl": "assets/products/break-the-stigma-bottle/break-the-stigma-bottle-2.jpg",
     "name": "Break the Stigma Bottle",
     "price": 26,
     "sku": "bottle-stigma",
-    "description": "32 oz (950 ml) water bottle; premium, BPA-free, no condensation, leak-proof straw lid; made on demand."
+    "description": "32 oz (950 ml) water bottle; premium, BPA-free, no condensation, leak-proof straw lid; made on demand.",
+    "images": [
+      "assets/products/break-the-stigma-bottle/break-the-stigma-bottle-2.jpg",
+      "assets/products/break-the-stigma-bottle/break-the-stigma-bottle-1.jpg",
+      "assets/products/break-the-stigma-bottle/break-the-stigma-bottle-3.jpg",
+      "assets/products/break-the-stigma-bottle/break-the-stigma-bottle-4.jpg"
+    ]
   },
   {
     "available": true,
@@ -51,7 +81,12 @@
     "name": "Die-cut stickers \u2014 4 in",
     "price": 6.5,
     "sku": "stickers-diecut-4in",
-    "description": "Premium vinyl, matte finish, scratch/water/sunlight resistant, rated to last over 5 years; blank product sourced from the US."
+    "description": "Premium vinyl, matte finish, scratch/water/sunlight resistant, rated to last over 5 years; blank product sourced from the US.",
+    "images": [
+      "assets/products/die-cut-stickers/die-cut-stickers-1.jpg",
+      "assets/products/die-cut-stickers/die-cut-stickers-2.jpg",
+      "assets/products/die-cut-stickers/die-cut-stickers-3.jpg"
+    ]
   },
   {
     "available": true,
@@ -60,7 +95,12 @@
     "name": "Die-cut stickers \u2014 5 in",
     "price": 7,
     "sku": "stickers-diecut-5in",
-    "description": "Premium vinyl, matte finish, scratch/water/sunlight resistant, rated to last over 5 years; blank product sourced from the US."
+    "description": "Premium vinyl, matte finish, scratch/water/sunlight resistant, rated to last over 5 years; blank product sourced from the US.",
+    "images": [
+      "assets/products/die-cut-stickers/die-cut-stickers-1.jpg",
+      "assets/products/die-cut-stickers/die-cut-stickers-2.jpg",
+      "assets/products/die-cut-stickers/die-cut-stickers-3.jpg"
+    ]
   },
   {
     "available": true,
@@ -69,7 +109,12 @@
     "name": "Die-cut stickers \u2014 6 in",
     "price": 8,
     "sku": "stickers-diecut-6in",
-    "description": "Premium vinyl, matte finish, scratch/water/sunlight resistant, rated to last over 5 years; blank product sourced from the US."
+    "description": "Premium vinyl, matte finish, scratch/water/sunlight resistant, rated to last over 5 years; blank product sourced from the US.",
+    "images": [
+      "assets/products/die-cut-stickers/die-cut-stickers-1.jpg",
+      "assets/products/die-cut-stickers/die-cut-stickers-2.jpg",
+      "assets/products/die-cut-stickers/die-cut-stickers-3.jpg"
+    ]
   },
   {
     "available": true,
@@ -78,7 +123,17 @@
     "name": "Distressed Out Hat",
     "price": 20,
     "sku": "hat-distressed-out",
-    "description": "Official brand hat, slightly distressed brim and crown, low-profile, adjustable strap, one size fits most, embroidered \"C&C\" logo, charcoal grey; 100% chino cotton twill; blank product sourced from China."
+    "description": "Official brand hat, slightly distressed brim and crown, low-profile, adjustable strap, one size fits most, embroidered \"C&C\" logo, charcoal grey; 100% chino cotton twill; blank product sourced from China.",
+    "images": [
+      "assets/products/distressed-out-hat/distressed-out-hat-1.jpg",
+      "assets/products/distressed-out-hat/distressed-out-hat-2.jpg",
+      "assets/products/distressed-out-hat/distressed-out-hat-3.jpg",
+      "assets/products/distressed-out-hat/distressed-out-hat-4.jpg",
+      "assets/products/distressed-out-hat/distressed-out-hat-5.jpg",
+      "assets/products/distressed-out-hat/distressed-out-hat-6.jpg",
+      "assets/products/distressed-out-hat/distressed-out-hat-7.jpg",
+      "assets/products/distressed-out-hat/distressed-out-hat-8.jpg"
+    ]
   },
   {
     "available": true,
@@ -87,25 +142,38 @@
     "name": "Eco Tote Bag",
     "price": 24,
     "sku": "tote-eco",
-    "description": "Organic cotton tote, reinforced bottom, 100% certified organic cotton 3/1 twill, 8 oz/yd2, capacity 16 liters, inside pocket, dual handles 26.5 in; blank product sourced from India."
+    "description": "Organic cotton tote, reinforced bottom, 100% certified organic cotton 3/1 twill, 8 oz/yd2, capacity 16 liters, inside pocket, dual handles 26.5 in; blank product sourced from India.",
+    "images": [
+      "assets/products/eco-tote-bag/eco-tote-bag-1.jpg"
+    ]
   },
   {
     "available": true,
     "category": "Merch",
-    "imageUrl": "assets/products/fanny-pack/fanny-pack-1.jpg",
+    "imageUrl": "assets/products/fanny-pack/fanny-pack-3.jpg",
     "name": "Fanny Pack \u2014 S/M",
     "price": 30,
     "sku": "fanny-pack-sm",
-    "description": "Waist bag, 100% polyester, 9 oz/yd2, 6.5 in H x 13 in W x 2.75 in D, capacity 0.37 gal (1.4 L), water-resistant, top zipper with 2 sliders, small inner pocket, 1.25 in adjustable straps; blank product components from China."
+    "description": "Waist bag, 100% polyester, 9 oz/yd2, 6.5 in H x 13 in W x 2.75 in D, capacity 0.37 gal (1.4 L), water-resistant, top zipper with 2 sliders, small inner pocket, 1.25 in adjustable straps; blank product components from China.",
+    "images": [
+      "assets/products/fanny-pack/fanny-pack-3.jpg",
+      "assets/products/fanny-pack/fanny-pack-1.jpg",
+      "assets/products/fanny-pack/fanny-pack-2.jpg"
+    ]
   },
   {
     "available": true,
     "category": "Merch",
-    "imageUrl": "assets/products/fanny-pack/fanny-pack-1.jpg",
+    "imageUrl": "assets/products/fanny-pack/fanny-pack-3.jpg",
     "name": "Fanny Pack \u2014 M/L",
     "price": 30,
     "sku": "fanny-pack-ml",
-    "description": "Waist bag, 100% polyester, 9 oz/yd2, 6.5 in H x 13 in W x 2.75 in D, capacity 0.37 gal (1.4 L), water-resistant, top zipper with 2 sliders, small inner pocket, 1.25 in adjustable straps; blank product components from China."
+    "description": "Waist bag, 100% polyester, 9 oz/yd2, 6.5 in H x 13 in W x 2.75 in D, capacity 0.37 gal (1.4 L), water-resistant, top zipper with 2 sliders, small inner pocket, 1.25 in adjustable straps; blank product components from China.",
+    "images": [
+      "assets/products/fanny-pack/fanny-pack-3.jpg",
+      "assets/products/fanny-pack/fanny-pack-1.jpg",
+      "assets/products/fanny-pack/fanny-pack-2.jpg"
+    ]
   },
   {
     "available": true,
@@ -114,7 +182,15 @@
     "name": "Holiday Resilience Buttons \u2014 1.25 in",
     "price": 14,
     "sku": "buttons-holiday-125in",
-    "description": "Top-quality pin buttons, lightweight, sturdy, scratch- and UV-resistant, metal shell, flat back, pin on back; sourced from the US."
+    "description": "Top-quality pin buttons, lightweight, sturdy, scratch- and UV-resistant, metal shell, flat back, pin on back; sourced from the US.",
+    "images": [
+      "assets/products/holiday-resilience-buttons/holiday-resilience-buttons-1.jpg",
+      "assets/products/holiday-resilience-buttons/holiday-resilience-buttons-2.jpg",
+      "assets/products/holiday-resilience-buttons/holiday-resilience-buttons-3.jpg",
+      "assets/products/holiday-resilience-buttons/holiday-resilience-buttons-4.jpg",
+      "assets/products/holiday-resilience-buttons/holiday-resilience-buttons-5.jpg",
+      "assets/products/holiday-resilience-buttons/holiday-resilience-buttons-6.jpg"
+    ]
   },
   {
     "available": true,
@@ -123,7 +199,15 @@
     "name": "Holiday Resilience Buttons \u2014 2.25 in",
     "price": 14,
     "sku": "buttons-holiday-225in",
-    "description": "Top-quality pin buttons, lightweight, sturdy, scratch- and UV-resistant, metal shell, flat back, pin on back; sourced from the US."
+    "description": "Top-quality pin buttons, lightweight, sturdy, scratch- and UV-resistant, metal shell, flat back, pin on back; sourced from the US.",
+    "images": [
+      "assets/products/holiday-resilience-buttons/holiday-resilience-buttons-1.jpg",
+      "assets/products/holiday-resilience-buttons/holiday-resilience-buttons-2.jpg",
+      "assets/products/holiday-resilience-buttons/holiday-resilience-buttons-3.jpg",
+      "assets/products/holiday-resilience-buttons/holiday-resilience-buttons-4.jpg",
+      "assets/products/holiday-resilience-buttons/holiday-resilience-buttons-5.jpg",
+      "assets/products/holiday-resilience-buttons/holiday-resilience-buttons-6.jpg"
+    ]
   },
   {
     "available": true,
@@ -132,7 +216,12 @@
     "name": "Holiday Soy Candle",
     "price": 14.5,
     "sku": "candle-holiday-soy",
-    "description": "Soft, clean, calming soy candle; glass jar, 11 oz (283.5 g), burn time ~60 hours, trim wick to 1/4 in; product sourced from the US; \"Aromatherapy candles to come!\""
+    "description": "Soft, clean, calming soy candle; glass jar, 11 oz (283.5 g), burn time ~60 hours, trim wick to 1/4 in; product sourced from the US; \"Aromatherapy candles to come!\"",
+    "images": [
+      "assets/products/holiday-soy-candle/holiday-soy-candle-1.jpg",
+      "assets/products/holiday-soy-candle/holiday-soy-candle-2.jpg",
+      "assets/products/holiday-soy-candle/holiday-soy-candle-3.jpg"
+    ]
   },
   {
     "available": true,
@@ -141,7 +230,11 @@
     "name": "Resilience Hoodie \u2014 S",
     "price": 49.5,
     "sku": "hoodie-resilience-s",
-    "description": "Comfortable everyday hoodie; 7.5 oz/yd2 cotton-rich fleece (80% ring-spun USA premium cotton, 20% polyester; Heather Grey 75/25; Forest/other Heather/Light Pink/Maroon/Military Green/Purple 50/50); jersey-lined hood, flat drawcord, drop shoulder, front pouch pocket, ribbed cuffs/waistband with 5% spandex, tear-away label, USMCA certified; blank product sourced from Mexico."
+    "description": "Comfortable everyday hoodie; 7.5 oz/yd2 cotton-rich fleece (80% ring-spun USA premium cotton, 20% polyester; Heather Grey 75/25; Forest/other Heather/Light Pink/Maroon/Military Green/Purple 50/50); jersey-lined hood, flat drawcord, drop shoulder, front pouch pocket, ribbed cuffs/waistband with 5% spandex, tear-away label, USMCA certified; blank product sourced from Mexico.",
+    "images": [
+      "assets/products/resilience-hoodie/resilience-hoodie-1.jpg",
+      "assets/products/resilience-hoodie/resilience-hoodie-2.jpg"
+    ]
   },
   {
     "available": true,
@@ -150,7 +243,11 @@
     "name": "Resilience Hoodie \u2014 M",
     "price": 49.5,
     "sku": "hoodie-resilience-m",
-    "description": "Comfortable everyday hoodie; 7.5 oz/yd2 cotton-rich fleece (80% ring-spun USA premium cotton, 20% polyester; Heather Grey 75/25; Forest/other Heather/Light Pink/Maroon/Military Green/Purple 50/50); jersey-lined hood, flat drawcord, drop shoulder, front pouch pocket, ribbed cuffs/waistband with 5% spandex, tear-away label, USMCA certified; blank product sourced from Mexico."
+    "description": "Comfortable everyday hoodie; 7.5 oz/yd2 cotton-rich fleece (80% ring-spun USA premium cotton, 20% polyester; Heather Grey 75/25; Forest/other Heather/Light Pink/Maroon/Military Green/Purple 50/50); jersey-lined hood, flat drawcord, drop shoulder, front pouch pocket, ribbed cuffs/waistband with 5% spandex, tear-away label, USMCA certified; blank product sourced from Mexico.",
+    "images": [
+      "assets/products/resilience-hoodie/resilience-hoodie-1.jpg",
+      "assets/products/resilience-hoodie/resilience-hoodie-2.jpg"
+    ]
   },
   {
     "available": true,
@@ -159,7 +256,11 @@
     "name": "Resilience Hoodie \u2014 L",
     "price": 49.5,
     "sku": "hoodie-resilience-l",
-    "description": "Comfortable everyday hoodie; 7.5 oz/yd2 cotton-rich fleece (80% ring-spun USA premium cotton, 20% polyester; Heather Grey 75/25; Forest/other Heather/Light Pink/Maroon/Military Green/Purple 50/50); jersey-lined hood, flat drawcord, drop shoulder, front pouch pocket, ribbed cuffs/waistband with 5% spandex, tear-away label, USMCA certified; blank product sourced from Mexico."
+    "description": "Comfortable everyday hoodie; 7.5 oz/yd2 cotton-rich fleece (80% ring-spun USA premium cotton, 20% polyester; Heather Grey 75/25; Forest/other Heather/Light Pink/Maroon/Military Green/Purple 50/50); jersey-lined hood, flat drawcord, drop shoulder, front pouch pocket, ribbed cuffs/waistband with 5% spandex, tear-away label, USMCA certified; blank product sourced from Mexico.",
+    "images": [
+      "assets/products/resilience-hoodie/resilience-hoodie-1.jpg",
+      "assets/products/resilience-hoodie/resilience-hoodie-2.jpg"
+    ]
   },
   {
     "available": true,
@@ -168,7 +269,11 @@
     "name": "Resilience Hoodie \u2014 XL",
     "price": 49.5,
     "sku": "hoodie-resilience-xl",
-    "description": "Comfortable everyday hoodie; 7.5 oz/yd2 cotton-rich fleece (80% ring-spun USA premium cotton, 20% polyester; Heather Grey 75/25; Forest/other Heather/Light Pink/Maroon/Military Green/Purple 50/50); jersey-lined hood, flat drawcord, drop shoulder, front pouch pocket, ribbed cuffs/waistband with 5% spandex, tear-away label, USMCA certified; blank product sourced from Mexico."
+    "description": "Comfortable everyday hoodie; 7.5 oz/yd2 cotton-rich fleece (80% ring-spun USA premium cotton, 20% polyester; Heather Grey 75/25; Forest/other Heather/Light Pink/Maroon/Military Green/Purple 50/50); jersey-lined hood, flat drawcord, drop shoulder, front pouch pocket, ribbed cuffs/waistband with 5% spandex, tear-away label, USMCA certified; blank product sourced from Mexico.",
+    "images": [
+      "assets/products/resilience-hoodie/resilience-hoodie-1.jpg",
+      "assets/products/resilience-hoodie/resilience-hoodie-2.jpg"
+    ]
   },
   {
     "available": true,
@@ -177,7 +282,11 @@
     "name": "Resilience Hoodie \u2014 2XL",
     "price": 52,
     "sku": "hoodie-resilience-2xl",
-    "description": "Comfortable everyday hoodie; 7.5 oz/yd2 cotton-rich fleece (80% ring-spun USA premium cotton, 20% polyester; Heather Grey 75/25; Forest/other Heather/Light Pink/Maroon/Military Green/Purple 50/50); jersey-lined hood, flat drawcord, drop shoulder, front pouch pocket, ribbed cuffs/waistband with 5% spandex, tear-away label, USMCA certified; blank product sourced from Mexico."
+    "description": "Comfortable everyday hoodie; 7.5 oz/yd2 cotton-rich fleece (80% ring-spun USA premium cotton, 20% polyester; Heather Grey 75/25; Forest/other Heather/Light Pink/Maroon/Military Green/Purple 50/50); jersey-lined hood, flat drawcord, drop shoulder, front pouch pocket, ribbed cuffs/waistband with 5% spandex, tear-away label, USMCA certified; blank product sourced from Mexico.",
+    "images": [
+      "assets/products/resilience-hoodie/resilience-hoodie-1.jpg",
+      "assets/products/resilience-hoodie/resilience-hoodie-2.jpg"
+    ]
   },
   {
     "available": true,
@@ -186,7 +295,13 @@
     "name": "Resilience Mug \u2014 11 oz",
     "price": 13.11,
     "sku": "mug-resilience-11oz",
-    "description": "\"You're stronger than anything you can brew\"; 15 oz ceramic mug; 100% white ceramic; durable, dishwasher-safe, scratch-resistant; printed in the USA."
+    "description": "\"You're stronger than anything you can brew\"; 15 oz ceramic mug; 100% white ceramic; durable, dishwasher-safe, scratch-resistant; printed in the USA.",
+    "images": [
+      "assets/products/resilience-mug/resilience-mug-1.jpg",
+      "assets/products/resilience-mug/resilience-mug-2.jpg",
+      "assets/products/resilience-mug/resilience-mug-3.jpg",
+      "assets/products/resilience-mug/resilience-mug-4.jpg"
+    ]
   },
   {
     "available": true,
@@ -195,7 +310,13 @@
     "name": "Resilience Mug \u2014 15 oz",
     "price": 14.13,
     "sku": "mug-resilience-15oz",
-    "description": "\"You're stronger than anything you can brew\"; 15 oz ceramic mug; 100% white ceramic; durable, dishwasher-safe, scratch-resistant; printed in the USA."
+    "description": "\"You're stronger than anything you can brew\"; 15 oz ceramic mug; 100% white ceramic; durable, dishwasher-safe, scratch-resistant; printed in the USA.",
+    "images": [
+      "assets/products/resilience-mug/resilience-mug-1.jpg",
+      "assets/products/resilience-mug/resilience-mug-2.jpg",
+      "assets/products/resilience-mug/resilience-mug-3.jpg",
+      "assets/products/resilience-mug/resilience-mug-4.jpg"
+    ]
   },
   {
     "available": true,
@@ -204,7 +325,10 @@
     "name": "That's A Latte Cup",
     "price": 13.5,
     "sku": "cup-thats-a-latte",
-    "description": "12 oz white ceramic mug; 4 in H x 3.6 in diameter; BPA- and lead-free; dishwasher and microwave-safe; classic cone shape; glossy ceramic finish; product sourced from China, decorated in the US; made on demand."
+    "description": "12 oz white ceramic mug; 4 in H x 3.6 in diameter; BPA- and lead-free; dishwasher and microwave-safe; classic cone shape; glossy ceramic finish; product sourced from China, decorated in the US; made on demand.",
+    "images": [
+      "assets/products/thats-a-latte-cup/thats-a-latte-cup-1.jpg"
+    ]
   },
   {
     "available": true,
@@ -213,7 +337,16 @@
     "name": "The Mission Mug \u2014 25 oz",
     "price": 30,
     "sku": "mug-mission-25oz",
-    "description": "Elevated travel mug, stainless steel; 25 oz (739.3 ml): 6.97 in H x 3.58 in W; 40 oz (1182.9 ml): 10.13 in H x 3.80 in W; hand-wash recommended; straw lid; 25 oz fits standard cup holders, 40 oz does not; not dishwasher-safe, not for microwave; blank product sourced from China."
+    "description": "Elevated travel mug, stainless steel; 25 oz (739.3 ml): 6.97 in H x 3.58 in W; 40 oz (1182.9 ml): 10.13 in H x 3.80 in W; hand-wash recommended; straw lid; 25 oz fits standard cup holders, 40 oz does not; not dishwasher-safe, not for microwave; blank product sourced from China.",
+    "images": [
+      "assets/products/the-mission-mug/the-mission-mug-1.jpg",
+      "assets/products/the-mission-mug/the-mission-mug-2.jpg",
+      "assets/products/the-mission-mug/the-mission-mug-3.jpg",
+      "assets/products/the-mission-mug/the-mission-mug-4.jpg",
+      "assets/products/the-mission-mug/the-mission-mug-5.jpg",
+      "assets/products/the-mission-mug/the-mission-mug-6.jpg",
+      "assets/products/the-mission-mug/the-mission-mug-7.jpg"
+    ]
   },
   {
     "available": true,
@@ -222,6 +355,15 @@
     "name": "The Mission Mug \u2014 40 oz",
     "price": 30,
     "sku": "mug-mission-40oz",
-    "description": "Elevated travel mug, stainless steel; 25 oz (739.3 ml): 6.97 in H x 3.58 in W; 40 oz (1182.9 ml): 10.13 in H x 3.80 in W; hand-wash recommended; straw lid; 25 oz fits standard cup holders, 40 oz does not; not dishwasher-safe, not for microwave; blank product sourced from China."
+    "description": "Elevated travel mug, stainless steel; 25 oz (739.3 ml): 6.97 in H x 3.58 in W; 40 oz (1182.9 ml): 10.13 in H x 3.80 in W; hand-wash recommended; straw lid; 25 oz fits standard cup holders, 40 oz does not; not dishwasher-safe, not for microwave; blank product sourced from China.",
+    "images": [
+      "assets/products/the-mission-mug/the-mission-mug-1.jpg",
+      "assets/products/the-mission-mug/the-mission-mug-2.jpg",
+      "assets/products/the-mission-mug/the-mission-mug-3.jpg",
+      "assets/products/the-mission-mug/the-mission-mug-4.jpg",
+      "assets/products/the-mission-mug/the-mission-mug-5.jpg",
+      "assets/products/the-mission-mug/the-mission-mug-6.jpg",
+      "assets/products/the-mission-mug/the-mission-mug-7.jpg"
+    ]
   }
 ]
