@@ -478,6 +478,46 @@ input[type="range"] {
   line-height: 1.5;
 }
 
+.product-img { cursor: zoom-in; }
+
+/* ---------- Lightbox (product photo zoom pop-out) ----------
+   The card photo is cropped to a 1:1 square; the pop-out shows
+   the photo at its natural aspect ratio, constrained to the
+   viewport, so small print on a product stays readable. */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(12, 6, 3, 0.93);
+}
+.lightbox-img {
+  max-width: 92vw;
+  max-height: 88vh;
+  width: auto;
+  height: auto;
+  border-radius: 8px;
+  background: #241610;
+}
+.lightbox-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--espresso-dark);
+  font-size: 26px;
+  line-height: 1;
+  font-weight: 800;
+  cursor: pointer;
+}
+
 /* ---------- Contact page fixes ---------- */
 .crisis-call { font-size: 16px; margin: 10px 0 6px; }
 .crisis-number {

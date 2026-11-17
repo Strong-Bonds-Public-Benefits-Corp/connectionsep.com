@@ -15,11 +15,15 @@
    guest — the backend answers 401 — so a 401 here clears
    the session and retries once as a guest, and says so.
    ------------------------------------------------------------
-   Product options (sizes etc.) are display-only in v01: the
-   orders endpoint takes { productId, quantity } and has no
-   variant field, so a size choice cannot be recorded on an
-   order. Options render as text ("Available in: S, M, L").
-   Recording a chosen variant needs a backend change.
+   One card per product: the API returns one document per
+   buyable size variation (25 docs for 12 products), and this
+   file groups them by the imageUrl folder slug, so each
+   product shows once with a size dropdown. The dropdown picks
+   which variant document goes in the cart — the orders
+   endpoint prices from that document, so the size, the price
+   and the order line stay exact with no backend change.
+   Clicking a product photo opens a lightbox (zoom pop-out)
+   at the photo's natural aspect ratio.
    ============================================================ */
 (function () {
   "use strict";
@@ -104,42 +108,136 @@
     return names.length ? "Available in: " + names.join(", ") + "." : "";
   }
 
+  /* ---------------- Product grouping ----------------
+     The API returns one document per buyable size variation.
+     Group by the imageUrl folder slug — every doc carries
+     assets/products/<slug>/... — so each product renders
+     once. Variants keep the API's order (the store's own
+     size order: S, M, L, XL, 2XL, ...). */
+  function groupKey(p) {
+    var m = /assets\/products\/([^\/]+)\//.exec(p.imageUrl || "");
+    return m ? m[1] : ("id:" + p._id);
+  }
+
+  function splitName(name) {
+    var i = (name || "").lastIndexOf(" — ");
+    if (i < 0) { return { base: name, size: "" }; }
+    return { base: name.slice(0, i), size: name.slice(i + 3) };
+  }
+
+  function groupProducts(list) {
+    var groups = [];
+    var byKey = {};
+    list.forEach(function (p) {
+      var key = groupKey(p);
+      var g = byKey[key];
+      if (!g) {
+        g = {
+          key: key,
+          name: splitName(p.name).base,
+          description: p.description,
+          imageUrl: p.imageUrl,
+          variants: []
+        };
+        byKey[key] = g;
+        groups.push(g);
+      }
+      g.variants.push({ product: p, size: splitName(p.name).size || p.name });
+      if (!g.imageUrl && p.imageUrl) { g.imageUrl = p.imageUrl; }
+      if (!g.description && p.description) { g.description = p.description; }
+    });
+    return groups;
+  }
+
+  /* ---------------- Lightbox (photo zoom pop-out) ----------------
+     One photo per product (the primary). No gallery, no
+     prev/next — the other stored photos are for a later step.
+     Created in JS so market.html needs no new markup. */
+  var lightboxEl = null;
+
+  function openLightbox(src, alt) {
+    closeLightbox();
+    var overlay = document.createElement("div");
+    overlay.className = "lightbox";
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    overlay.setAttribute("aria-label", (alt || "Product photo") + " — enlarged");
+    var img = document.createElement("img");
+    img.className = "lightbox-img";
+    img.src = src;
+    img.alt = alt || "";
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "lightbox-close";
+    btn.setAttribute("aria-label", "Close enlarged photo");
+    btn.textContent = "×";
+    btn.addEventListener("click", function () { closeLightbox(); });
+    overlay.addEventListener("click", function (ev) {
+      if (ev.target === overlay) { closeLightbox(); }
+    });
+    overlay.appendChild(img);
+    overlay.appendChild(btn);
+    document.body.appendChild(overlay);
+    lightboxEl = overlay;
+    if (btn.focus) { btn.focus(); }
+  }
+
+  function closeLightbox() {
+    if (lightboxEl && lightboxEl.parentNode) { lightboxEl.parentNode.removeChild(lightboxEl); }
+    lightboxEl = null;
+  }
+
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape") { closeLightbox(); }
+  });
+
   function renderProducts() {
     grid.innerHTML = "";
-    if (products.length === 0) {
+    var groups = groupProducts(products);
+    if (groups.length === 0) {
       setStatus("The market is empty right now — products are being added. Check back soon.");
       return;
     }
     setStatus("");
-    products.forEach(function (p) {
+    groups.forEach(function (g) {
       var article = document.createElement("article");
       article.className = "product";
-      if (p.imageUrl) {
+      if (g.imageUrl) {
         var img = document.createElement("img");
         img.className = "product-img";
-        img.src = p.imageUrl;
-        img.alt = p.name;
+        img.src = g.imageUrl;
+        img.alt = g.name;
+        img.tabIndex = 0;
+        img.setAttribute("role", "button");
+        img.setAttribute("aria-label", "View a larger photo of " + g.name);
+        img.addEventListener("click", function () { openLightbox(g.imageUrl, g.name); });
+        img.addEventListener("keydown", function (ev) {
+          if (ev.key === "Enter" || ev.key === " ") {
+            ev.preventDefault();
+            openLightbox(g.imageUrl, g.name);
+          }
+        });
         article.appendChild(img);
       } else {
         var ph = document.createElement("div");
         ph.className = "product-img product-img-placeholder";
         ph.setAttribute("role", "img");
-        ph.setAttribute("aria-label", p.name + " photo coming soon");
+        ph.setAttribute("aria-label", g.name + " photo coming soon");
         var span = document.createElement("span");
         span.innerHTML = "Photo<br>coming soon";
         ph.appendChild(span);
         article.appendChild(ph);
       }
       var h3 = document.createElement("h3");
-      h3.textContent = p.name;
+      h3.textContent = g.name;
       article.appendChild(h3);
-      if (p.description) {
+      if (g.description) {
         var why = document.createElement("p");
         why.className = "product-why";
-        why.textContent = p.description;
+        why.textContent = g.description;
         article.appendChild(why);
       }
-      var opt = optionsText(p);
+      var opt = optionsText(g.variants[0].product);
       if (opt) {
         var optEl = document.createElement("p");
         optEl.className = "product-why";
@@ -148,14 +246,45 @@
       }
       var price = document.createElement("p");
       price.className = "product-price";
-      price.textContent = money(priceCents(p));
+      price.textContent = money(priceCents(g.variants[0].product));
       article.appendChild(price);
+      var select = null;
+      if (g.variants.length > 1) {
+        var field = document.createElement("div");
+        field.className = "field";
+        var label = document.createElement("label");
+        label.textContent = "Size";
+        label.setAttribute("for", "size-" + g.key);
+        field.appendChild(label);
+        select = document.createElement("select");
+        select.id = "size-" + g.key;
+        select.setAttribute("aria-label", "Size for " + g.name);
+        g.variants.forEach(function (v) {
+          var o = document.createElement("option");
+          o.value = v.product._id;
+          o.textContent = v.size + " — " + money(priceCents(v.product));
+          select.appendChild(o);
+        });
+        select.addEventListener("change", function () {
+          var chosen = byId[select.value];
+          if (chosen) { price.textContent = money(priceCents(chosen)); }
+        });
+        field.appendChild(select);
+        /* Size picker sits above the price so the price that
+           follows it is always the picked size's price. */
+        article.insertBefore(field, price);
+      }
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "btn btn-gold";
       btn.textContent = "Add to cart";
-      btn.setAttribute("data-product-id", p._id);
-      btn.addEventListener("click", function () { addToCart(p._id); });
+      btn.setAttribute("data-product-id", g.variants[0].product._id);
+      btn.addEventListener("click", function () {
+        /* The selected variant's own document id — the orders
+           endpoint prices from that document, so the size and
+           the charge stay exact. */
+        addToCart(select ? select.value : g.variants[0].product._id);
+      });
       article.appendChild(btn);
       grid.appendChild(article);
     });
