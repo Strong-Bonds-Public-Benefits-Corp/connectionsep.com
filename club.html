@@ -129,7 +129,71 @@
     <h2 id="join-h">Join the waitlist.</h2>
     <p id="join-body">Founding enrollment isn't open yet. Leave your email and we'll tell you the day it opens —
        and the day it closes, because four weeks goes fast.</p>
-    <p>Email <a href="mailto:hello@connectionsep.com?subject=Club%20waitlist">hello@connectionsep.com</a> with 'Club waitlist' in the subject and we'll add you to the list.</p>
+    <p id="waitlist-info">Email <a href="mailto:hello@connectionsep.com?subject=Club%20waitlist">hello@connectionsep.com</a> with 'Club waitlist' in the subject and we'll add you to the list.</p>
+
+    <!-- Join flow (v01): shown only while enrollment is open.
+         Until the opening date is set, this whole block stays
+         hidden and the waitlist above is the join section. -->
+    <div id="club-join-root" hidden>
+
+      <!-- Log in or create an account (memberships belong to an account). -->
+      <div id="club-auth" hidden>
+        <h3>Log in or create an account.</h3>
+        <p>Membership belongs to an account, so log in or create one to join. Your card is charged once a year — the price is set by the server, never by this page.</p>
+        <div class="auth-toggle" role="group" aria-label="Log in or create an account">
+          <button type="button" class="auth-tab" id="auth-tab-login" aria-pressed="true">Log in</button>
+          <button type="button" class="auth-tab" id="auth-tab-signup" aria-pressed="false">Create account</button>
+        </div>
+        <form id="club-auth-form" novalidate>
+          <div class="field" id="auth-name-field" hidden>
+            <label for="auth-name">Your name</label>
+            <input id="auth-name" name="name" type="text" autocomplete="name" maxlength="100">
+          </div>
+          <div class="field">
+            <label for="auth-email">Email</label>
+            <input id="auth-email" name="email" type="email" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="auth-password">Password <span class="field-hint">(at least 8 characters)</span></label>
+            <input id="auth-password" name="password" type="password" autocomplete="current-password" required minlength="8">
+          </div>
+          <p class="field-error" id="auth-error" hidden></p>
+          <button type="submit" class="btn" id="auth-submit">Log in</button>
+        </form>
+      </div>
+
+      <!-- Already a member. -->
+      <div id="club-member" hidden>
+        <h3>You're already a member.</h3>
+        <p id="club-member-details"></p>
+        <p class="club-note"><button type="button" class="link-btn" data-club-logout>Log out</button></p>
+      </div>
+
+      <!-- Tier picker + card + pay. -->
+      <div id="club-payment" hidden>
+        <h3>Choose your tier.</h3>
+        <fieldset class="tier-picker" id="club-tier-picker">
+          <legend class="visually-hidden">Membership tier</legend>
+        </fieldset>
+        <p class="field-note" id="student-note" hidden>Charged $75 once today — the $25-a-month split is coming in a later version.</p>
+        <div class="field">
+          <label>Card details</label>
+          <div id="club-card-container"></div>
+          <p class="field-note">Your card is tokenized by Square — the number never touches our servers.</p>
+        </div>
+        <p class="field-error" id="club-pay-error" hidden></p>
+        <button type="button" class="btn" id="club-pay">Join the Sanctuary Club</button>
+        <p class="club-note">Logged in as <span class="club-account-email"></span> · <button type="button" class="link-btn" data-club-logout>Log out</button></p>
+      </div>
+
+      <!-- Confirmation. -->
+      <div id="club-success" hidden>
+        <h3>Welcome to the Sanctuary Club.</h3>
+        <p id="club-success-details"></p>
+        <p>Your membership is active for one year. Watch your inbox for what's next — and thank you for building this place with us.</p>
+      </div>
+
+    </div>
   </section>
 
   <div class="crisis" role="note" aria-label="Crisis resources">
@@ -145,6 +209,8 @@
   </footer>
 
 </div>
+<script src="js/auth.js"></script>
+<script src="js/square-payments.js"></script>
 <script src="js/club.js"></script>
 </body>
 </html>

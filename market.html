@@ -33,105 +33,102 @@
     </div>
   </header>
 
-  <div class="construction-banner" role="note">
-    <strong>Under Construction.</strong> The Resilience Market isn't taking orders yet. The products below are placeholders for reference until Square checkout, real designs, and the RESILIENCE10 code are live.
+  <div class="live-banner" role="note">
+    <strong>Checkout is live.</strong> Orders are made to order and ship after you order — every purchase funds the mission. Prices come from the live catalog below.
   </div>
 
-  <!-- ============================================================
-       PRODUCT TEMPLATE — copy this article block for each new item:
-       1. Replace PLACEHOLDER_IMG with the final product photo
-       2. Fill in title, why, price
-       3. Keep or remove the size <select> as needed
-       4. Replace PLACEHOLDER_SQUARE_LINK with the Square item checkout URL
-       ============================================================ -->
-
+  <!-- Products render from GET /api/products — the catalog in
+       the database is the single source of truth. No prices
+       are hard-coded on this page. -->
   <section class="sec" aria-label="Products">
-    <div class="product-grid">
+    <div id="market-status" class="market-status" hidden></div>
+    <div class="product-grid" id="product-grid"></div>
+  </section>
 
-      <!-- T-SHIRT -->
-      <article class="product">
-        <!-- PLACEHOLDER_IMG: replace with final T-shirt design photo -->
-        <img class="product-img" src="https://cue-r.com/cdn/shop/collections/front_Mockups_without_logo_19a81729-005e-42fd-b5d6-c504486e36d6.jpg?v=1741558249&width=400" alt="I Survived T-shirt — placeholder image">
-        <h3>I Survived</h3>
-        <p class="product-why">This shirt is for anyone that has ever thought about ending their own life and are still here. That takes real courage and we want to thank you for still being here and for helping us tell the story and build resilience in the next person.</p>
-        <p class="product-price">$28.00</p>
-        <div class="field">
-          <label for="size-shirt">Size</label>
-          <select id="size-shirt" name="size-shirt">
-            <option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option>
-          </select>
+  <section class="sec" id="cart-section" aria-labelledby="cart-h">
+    <h2 id="cart-h">Your cart</h2>
+    <div id="cart-empty"><p>Your cart is empty. Add something from the market above.</p></div>
+    <div id="cart-lines" hidden></div>
+    <div id="cart-summary" hidden>
+      <p>Subtotal: <strong id="cart-subtotal"></strong></p>
+      <p id="cart-discount-row" hidden>Discount (<span id="cart-discount-code"></span>): &minus;<strong id="cart-discount-amount"></strong></p>
+      <p>Total: <strong id="cart-total"></strong></p>
+    </div>
+  </section>
+
+  <section class="sec" id="checkout" aria-labelledby="checkout-h">
+    <h2 id="checkout-h">Checkout</h2>
+    <p id="checkout-login-note"><span id="checkout-login-text">Checking out as a guest is fine.</span> <button type="button" class="link-btn" id="checkout-show-login">Log in</button><span id="checkout-login-tail"> to attach this order to your account.</span></p>
+
+    <!-- Optional login (guest checkout is the default). -->
+    <div id="checkout-auth" hidden>
+      <div class="auth-toggle" role="group" aria-label="Log in or create an account">
+        <button type="button" class="auth-tab" id="m-auth-tab-login" aria-pressed="true">Log in</button>
+        <button type="button" class="auth-tab" id="m-auth-tab-signup" aria-pressed="false">Create account</button>
+      </div>
+      <form id="m-auth-form" novalidate>
+        <div class="field" id="m-auth-name-field" hidden>
+          <label for="m-auth-name">Your name</label>
+          <input id="m-auth-name" name="name" type="text" autocomplete="name" maxlength="100">
         </div>
-        <!-- PLACEHOLDER_SQUARE_LINK: replace with Square checkout URL for this item -->
-        <a class="btn btn-gold" href="#">Buy</a>
-      </article>
-
-      <!-- HOODIE -->
-      <article class="product">
-        <!-- PLACEHOLDER_IMG: replace with final hoodie design photo -->
-        <img class="product-img" src="https://public.readdy.ai/ai/img_res/7758bb06b9a47400ddd75911e1993986.jpg" alt="Resilience hoodie — placeholder image">
-        <h3>Still Here</h3>
-        <p class="product-why">For the cold mornings and the hard days. A hoodie is warmth you can carry — a reminder that you're part of something that believes in comebacks, stitched into every seam.</p>
-        <p class="product-price">$48.00</p>
         <div class="field">
-          <label for="size-hoodie">Size</label>
-          <select id="size-hoodie" name="size-hoodie">
-            <option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option>
-          </select>
+          <label for="m-auth-email">Email</label>
+          <input id="m-auth-email" name="email" type="email" autocomplete="email" required>
         </div>
-        <!-- PLACEHOLDER_SQUARE_LINK: replace with Square checkout URL for this item -->
-        <a class="btn btn-gold" href="#">Buy</a>
-      </article>
-
-      <!-- HAT -->
-      <article class="product">
-        <!-- PLACEHOLDER_IMG: replace with final hat design photo -->
-        <img class="product-img" src="https://public.blenderkit.com/thumbnails/assets/cff2db5a684d4675930d3f146e6bd1d4/files/thumbnail_281d1448-15eb-44cc-a90e-5fd7b4c54ce7.png.1024x1024_q85.png" alt="Resilience hat — placeholder image">
-        <h3>Resilience Hat</h3>
-        <p class="product-why">Wear it forward. Every hat is a conversation starter — and every conversation is a chance to tell someone they're not alone.</p>
-        <p class="product-price">$24.00</p>
         <div class="field">
-          <label for="size-hat">Size</label>
-          <select id="size-hat" name="size-hat">
-            <option>Adjustable</option><option>S/M</option><option>L/XL</option>
-          </select>
+          <label for="m-auth-password">Password <span class="field-hint">(at least 8 characters)</span></label>
+          <input id="m-auth-password" name="password" type="password" autocomplete="current-password" required minlength="8">
         </div>
-        <!-- PLACEHOLDER_SQUARE_LINK: replace with Square checkout URL for this item -->
-        <a class="btn btn-gold" href="#">Buy</a>
-      </article>
+        <p class="field-error" id="m-auth-error" hidden></p>
+        <button type="submit" class="btn" id="m-auth-submit">Log in</button>
+      </form>
+    </div>
 
-      <!-- STICKERS -->
-      <article class="product">
-        <!-- PLACEHOLDER_IMG: replace this div with <img class="product-img" src="..." alt="..."> using the final sticker pack photo -->
-        <div class="product-img product-img-placeholder" role="img" aria-label="Sticker pack photo coming soon"><span>Photo<br>coming soon</span></div>
-        <h3>Resilience Stickers · 5-pack</h3>
-        <p class="product-why">Small reminders, stuck where you'll see them. Laptop, water bottle, mirror — put resilience everywhere you look.</p>
-        <p class="product-price">$5.00</p>
-        <!-- PLACEHOLDER_SQUARE_LINK: replace with Square checkout URL for this item -->
-        <a class="btn btn-gold" href="#">Buy</a>
-      </article>
+    <form id="checkout-form" novalidate>
+      <div class="form-grid">
+        <div class="field">
+          <label for="ship-street">Street address <span class="req">*</span></label>
+          <input id="ship-street" name="street" type="text" autocomplete="street-address" required>
+        </div>
+        <div class="field">
+          <label for="ship-city">City <span class="req">*</span></label>
+          <input id="ship-city" name="city" type="text" autocomplete="address-level2" required>
+        </div>
+        <div class="field">
+          <label for="ship-state">State <span class="req">*</span></label>
+          <input id="ship-state" name="state" type="text" autocomplete="address-level1" required>
+        </div>
+        <div class="field field-narrow">
+          <label for="ship-zip">ZIP <span class="req">*</span></label>
+          <input id="ship-zip" name="zip" type="text" inputmode="numeric" autocomplete="postal-code" maxlength="5" required>
+          <p class="field-error" id="zip-error" hidden>Enter a 5-digit ZIP code.</p>
+        </div>
+      </div>
+      <div class="field field-narrow">
+        <label for="discount-code">Discount code (optional)</label>
+        <div class="code-row">
+          <input id="discount-code" name="discount-code" type="text" autocomplete="off" placeholder="RESILIENCE-XXXXXX">
+          <button type="button" class="btn btn-ghost" id="discount-apply">Apply</button>
+        </div>
+        <p class="field-note">One code per order, from a Resilience Check In — good for 7 days, 10% off.</p>
+        <p class="field-note" id="discount-status" hidden></p>
+        <p class="field-error" id="discount-error" hidden></p>
+        <p><button type="button" class="link-btn" id="discount-remove" hidden>Remove code</button></p>
+      </div>
+      <div class="field">
+        <label>Card details</label>
+        <div id="market-card-container"></div>
+        <p class="field-note">Your card is tokenized by Square — the number never touches our servers.</p>
+      </div>
+      <p class="field-error" id="checkout-error" hidden></p>
+      <button type="submit" class="btn btn-gold btn-big" id="place-order">Your cart is empty</button>
+    </form>
 
-      <!-- JOURNAL -->
-      <article class="product">
-        <!-- PLACEHOLDER_IMG: replace with final journal photo -->
-        <img class="product-img" src="https://i5.walmartimages.com/seo/Hardcover-Journal-Notebook-8-5-x-11-320-Pages-Large-A4-Notebook-Journal-College-Ruled-School-Work-Big-Leather-Journal-Writing-Women-Men-100Gsm-Lined_80b6fc93-6ecc-4a4c-a08f-f979cebc9b8e.17f8d1d4f1f5e1af6d9ef876587cbdad.jpeg" alt="PlayPause Journal — placeholder image">
-        <h3>PlayPause Journal</h3>
-        <p class="product-why">Our trauma-informed daily framework in your hands. The Shame Show, The Radical Pause, The Survivor Feed — the tool we built for the work, printed and bound.</p>
-        <p class="product-price">$22.00</p>
-        <!-- PLACEHOLDER_SQUARE_LINK: replace with Square checkout URL for this item -->
-        <a class="btn btn-gold" href="#">Buy</a>
-      </article>
-
-      <!-- MUG -->
-      <article class="product">
-        <!-- PLACEHOLDER_IMG: replace with final mug photo -->
-        <img class="product-img" src="https://i.pinimg.com/474x/a4/15/a5/a415a5cb7749274bd90c64a1b470f825.jpg" alt="Resilience mug — placeholder image">
-        <h3>Resilience Mug</h3>
-        <p class="product-why">Coffee tastes better when it means something. Ceramic, 12 oz — every cup funds the mission.</p>
-        <p class="product-price">$18.00</p>
-        <!-- PLACEHOLDER_SQUARE_LINK: replace with Square checkout URL for this item -->
-        <a class="btn btn-gold" href="#">Buy</a>
-      </article>
-
+    <div id="order-success" hidden>
+      <h3>Thank you — your order is in.</h3>
+      <p id="order-success-details"></p>
+      <p>Save your order number — it's how we find your order if you need us.</p>
+      <p><button type="button" class="btn btn-ghost" id="shop-more">Keep shopping</button></p>
     </div>
   </section>
 
@@ -149,5 +146,8 @@
 
 </div><!-- /.page -->
 <script src="js/main.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/square-payments.js"></script>
+<script src="js/market.js"></script>
 </body>
 </html>

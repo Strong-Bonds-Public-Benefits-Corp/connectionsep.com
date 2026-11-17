@@ -169,3 +169,110 @@ body {
 }
 
 .home-link { display: block; margin: 1rem 0; }
+
+/* ---------- Join flow (v01): login + tier picker + card ---------- */
+#club-join-root h3 { margin: 18px 0 6px; font-size: 24px; }
+#club-join-root p { color: var(--latte-muted); }
+#club-join-root p strong { color: var(--latte-cream); }
+
+.field { margin: 14px 0; }
+.field label {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--latte-cream);
+  margin-bottom: 6px;
+}
+.field-hint { font-size: 14px; color: var(--latte-muted); font-weight: 400; }
+.field input {
+  width: 100%;
+  font: inherit;
+  font-size: 17px;
+  background: var(--latte-cream);
+  color: var(--espresso);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.field input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+.field-error {
+  font-size: 15px;
+  color: #f0a0a0;
+  font-weight: 700;
+  margin: 10px 0;
+}
+.field-note { font-size: 15px; color: var(--latte-muted); margin: 8px 0 0; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.auth-toggle { margin: 14px 0 4px; }
+.auth-tab {
+  font: inherit;
+  font-size: 16px;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--latte-cream);
+  border-radius: 999px;
+  padding: 6px 16px;
+  margin: 2px 4px 2px 0;
+  cursor: pointer;
+}
+.auth-tab[aria-pressed="true"] { background: var(--gold); color: var(--espresso); border-color: var(--gold); }
+
+.link-btn {
+  font: inherit;
+  font-size: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--gold);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.club-note { font-size: 15px; color: var(--latte-muted); margin-top: 14px; }
+
+/* Tier picker: one radio per tier, prices shown from the page. */
+.tier-picker {
+  border: none;
+  padding: 0;
+  margin: 14px 0 4px;
+  display: grid;
+  gap: 10px;
+}
+.tier-option {
+  display: block;
+  background: var(--coffee-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 16px;
+  color: var(--latte-muted);
+  cursor: pointer;
+}
+.tier-option strong { color: var(--latte-cream); }
+.tier-option input { margin-right: 10px; accent-color: var(--gold); }
+.tier-option.selected { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
+
+/* Square card form host (Square renders its own iframe inside). */
+#club-card-container {
+  background: var(--latte-cream);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  min-height: 64px;
+}
+
+#club-success, #club-member {
+  background: var(--coffee-card);
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-top: 18px;
+}
+#club-success h3, #club-member h3 { margin-top: 0; }
