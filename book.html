@@ -46,18 +46,13 @@
     <p class="hint">Tip: use the &larr; and &rarr; keys on your keyboard to turn pages.</p>
   </section>
 
-  <!-- ================= CHAPTER 4 AND BEYOND (from MongoDB) ================= -->
+  <!-- ================= CHAPTER 4 AND BEYOND (from the Vault) ================= -->
   <section class="vault-preview" aria-labelledby="vault-h">
     <h2 id="vault-h">Chapter 4 and beyond</h2>
-    <p>From here on, the Book pulls approved stories from MongoDB. When survivors feel brave enough
-       to complete their story in the Book and it is approved, it appears here as the next chapter.
-       The founders' short entries were removed from this preview on purpose — the longer opening
-       chapters tell the whole story, and nobody needs to appear twice.</p>
-    <article class="vault-card">
-      <div class="vault-alias">Your story could be here</div>
-      <p>Chapter 4 opens when the first community story is approved. Until then, the Book opens
-         with its three hard-coded chapters and waits — it never opens empty.</p>
-    </article>
+    <p>From here on, the Book pulls approved stories from the Vault. When a survivor's story
+       is approved, it appears here as the next chapter.</p>
+    <p class="vault-feed-status" id="vault-feed-status" aria-live="polite">The Book opens with its three hard-coded chapters and waits — it never opens empty.</p>
+    <button type="button" class="btn" id="vault-load-more" hidden>Load more stories</button>
   </section>
 
   <!-- ================= THE FORM ================= -->
@@ -66,7 +61,9 @@
     <p>Your story, your words, your choice of name. You can stay anonymous. Nothing here is published
        until it has been reviewed — and you can ask for it to be removed at any time.</p>
 
-    <p class="form-note">Story submissions aren't open yet. When they open, your story will go to the Vault for review before appearing in the Journal — and you can ask for it to be removed at any time.</p>
+    <div class="under-construction" id="under-construction" role="note">
+      <p>Submissions are closed while we build the protections first. This part of the site is under construction. Before anyone can submit a story, we are making sure every story is protected and safe — reviewed by a person, stored securely, and removable at any time at your request. Until that protection is finished and tested, the form below stays closed. The stories already in this Journal are here to show you the format and to let you get to know us.</p>
+    </div>
     <form id="story-form" novalidate>
       <fieldset>
         <legend>What should we call you?</legend>
@@ -75,9 +72,23 @@
           Anonymous — no name attached
         </label>
         <label class="choice">
+          <input type="radio" name="display" value="first_name">
+          My first name and city:
+        </label>
+        <div class="name-fields" id="name-fields" hidden>
+          <div class="field">
+            <label for="firstname-input">First name</label>
+            <input type="text" name="firstName" id="firstname-input" placeholder="e.g. Alex" maxlength="100" disabled>
+          </div>
+          <div class="field">
+            <label for="city-input">City</label>
+            <input type="text" name="city" id="city-input" placeholder="e.g. El Paso" maxlength="100" disabled>
+          </div>
+        </div>
+        <label class="choice">
           <input type="radio" name="display" value="alias">
           A first name or alias:
-          <input type="text" name="alias" id="alias-input" placeholder="e.g. Alex, or a callsign" disabled>
+          <input type="text" name="alias" id="alias-input" placeholder="e.g. Alex, or a callsign" maxlength="100" disabled>
         </label>
       </fieldset>
 
@@ -90,12 +101,8 @@
       </div>
 
       <fieldset>
-        <legend>Name your pain — pick the tags that fit (optional, pick as many as you need)</legend>
+        <legend>Name your pain — pick the tags that fit (pick at least one, as many as you need)</legend>
         <div class="tag-grid" id="tag-grid"></div>
-        <div class="field">
-          <label for="other-tag">Another tag, in your own words (optional)</label>
-          <input type="text" id="other-tag" name="otherTag" placeholder="e.g. Betrayal">
-        </div>
       </fieldset>
 
       <div class="field">
@@ -140,6 +147,7 @@
 </div>
 
 <script src="js/book.js"></script>
+<script src="js/journal.js"></script>
 <script src="js/request-help.js"></script>
 </body>
 </html>

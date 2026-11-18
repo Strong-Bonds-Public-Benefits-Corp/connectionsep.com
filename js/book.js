@@ -1,6 +1,7 @@
 /* Survivor Journal: Your Story — live page. Standalone file (not main.js).
-   LIVE: story submissions disabled until the backend lands. The Vault contract is documented
-   in the comments so the backend build wires straight in. */
+   The book renders the three hard-coded founder chapters, then approved
+   Vault stories (Chapter 4+) appended by js/journal.js. The submission
+   form and the Vault feed wiring live in js/journal.js. */
 
 (function () {
   "use strict";
@@ -75,45 +76,43 @@
      In production, approved Vault docs render here after Chapter 3, using the
      tag display map above for legacy abbreviations. */
 
-  /* ---------- Vault contract (backend phase — NOT wired on this page yet) ----------
-     Submit:  POST /stories  { alias | "Anonymous", message, tags[],
-                                consentGiven: true, consentAt: now,
-                                consentTextVersion: "20261030-hybrid" }
-              -> server sets isApproved=false, submittedAt=now. A founder reviews
-                 before it can appear (see Review below).
-              -> server REJECTS any submission without consentGiven=true:
-                 no checkbox, no publication. Consent is stored WITH the story,
-                 not in a side note — every published story must trace to a
-                 checked box (or, for Jas J only, to the attested permission
-                 recorded in the handoff).
-     Alert:    on EVERY submission — whether or not the author left an email —
-               the backend sends a CONTENT-FREE alert to the reviewers
-               (founders; exact review inbox to be set at backend build).
-               The alert carries alias, tags, submittedAt, and a link to the
-               review queue. It NEVER carries the story text or the author's
-               email — the story lives in ONE place (the Vault), and the
-               alert is only the doorbell. Sending uses the existing Google
-               Workspace mail; no new vendor.
-     Review:   a founder reads every pending story in an authenticated review
-               queue (GET /stories?approved=false, reviewer-only). Approve is
-               one click: POST /stories/:id/approve flips isApproved=true and
-               the story joins the approved feed. Reject keeps it out of the
-               feed. No database hand-editing, no Atlas console for reviews.
-               NO AUTO-APPROVE, ever: a timer must never publish an unreviewed
-               story by default — review is human, every time.
-     Reminder clock (proposed): a story unreviewed after 7 days re-pings the
-               reviewers ("N stories waiting"); after 14 days it escalates to
-               both founders. The clock nags humans; it never publishes.
+  /* ---------- Vault contract (LIVE — see js/journal.js for the wiring) ----------
+     Submit:  POST /api/stories  { displayType: "first_name" | "alias" | "anonymous",
+                                firstName?, city?, alias?, message (max 10,000 chars),
+                                tags[] (from the allowed full-word list only),
+                                email? (optional), consentGiven: true }
+              -> 201 { storyId, status: "pending", reviewBy: submittedAt + 24h }.
+                 The story lands pending / invisible. The response NEVER echoes
+                 the story text back. A 400 carries a plain reason; nothing is stored.
+              -> the server REJECTS any submission without consentGiven=true:
+                 no checkbox, no publication. Consent is stored WITH the story.
+     Alert:    on EVERY submission the backend sends a CONTENT-FREE alert to the
+               reviewers. It NEVER carries the story text or the author's email.
+     Review:   a reviewer reads every pending story in the authenticated review
+               queue (GET /api/review/stories?status=pending). Approve is one click:
+               POST /api/review/stories/:id/approve sets status "approved" and the
+               story joins the approved feed. Reject keeps it out of the feed.
+               NO AUTO-APPROVE, ever — review is human, every time.
+     Review clock: a story untouched after 12 hours nudges the reviewers; after
+               24 hours it escalates to Tony. The clock nags humans; it never publishes.
      Author email (optional): if the author left one, it goes to a SEPARATE
-               store — never into the stories collection, never published —
-               and is used ONLY to contact the author (receipt note, publish
-               notice, removal handling).
-     Retrieve: GET /stories?approved=true
-              -> [{ alias, message, tags, submittedAt }] — approved only, newest last.
-                 The page appends these after the hard-coded chapters.
+               store (story_contacts) — never into the stories collection, never
+               published — and is used ONLY to contact the author.
+     Retrieve: GET /api/stories/approved
+              -> { stories: [{ id, displayType, displayName, city, alias, message,
+                               tags, approvedAt }], nextAfter } — approved only,
+                 approvedAt ascending, 20 per page, ?after= cursor. The page
+                 appends these after the hard-coded chapters (Chapter 4+).
+                 There is NO public GET /api/stories/:id — an unapproved story
+                 cannot be reached by guessing an address.
      Failure:  if the Vault cannot be reached, the Book still opens with its
                  hard-coded chapters. It never opens empty.
-     Removal:  an author can ask for removal at any time; the document is withdrawn. */
+     Removal:  an author can ask for removal at any time (POST
+               /api/stories/:id/request-removal with a removal token). The story
+               is hidden immediately; deletion happens only on author confirmation
+               (POST .../confirm-removal); restore puts it back
+               (POST .../restore-removal). Removal pages live at
+               /journal/remove/request|confirm|restore. */
 
   var FORM_TAGS = [
     "Domestic Violence", "Sexual Assault", "Military Sexual Trauma", "PTSD",
@@ -175,14 +174,40 @@
     }, 350);
   }
 
-  PAGES.forEach(function (page, i) {
-    var btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "chapter-btn";
-    btn.textContent = (i + 1) + ". " + page.title;
-    btn.addEventListener("click", function () { turnTo(i); });
-    chapterListEl.appendChild(btn);
-  });
+  function buildChapterList() {
+    chapterListEl.innerHTML = "";
+    PAGES.forEach(function (page, i) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "chapter-btn";
+      btn.textContent = (i + 1) + ". " + page.title;
+      btn.addEventListener("click", function () { turnTo(i); });
+      chapterListEl.appendChild(btn);
+    });
+  }
+
+  /* Append approved Vault stories as new book pages (Chapter 4+).
+     Called by js/journal.js after it fetches the approved feed.
+     Rebuilds the chapter list so the new chapters are reachable, and
+     refreshes the page counter. Returns how many pages were added. */
+  window.appendJournalPages = function (pages) {
+    if (!Array.isArray(pages) || pages.length === 0) { return 0; }
+    pages.forEach(function (page) {
+      var n = PAGES.length + 1;
+      PAGES.push({
+        kicker: "Chapter " + n,
+        title: page.title,
+        byline: page.byline || "",
+        paragraphs: page.paragraphs,
+        tags: page.tags || [],
+      });
+    });
+    buildChapterList();
+    render(current);
+    return pages.length;
+  };
+
+  buildChapterList();
 
   prevBtn.addEventListener("click", function () { turnTo(current - 1); });
   nextBtn.addEventListener("click", function () { turnTo(current + 1); });
@@ -191,7 +216,11 @@
     if (event.key === "ArrowRight") { turnTo(current + 1); }
   });
 
-  /* ---------- Form ---------- */
+  /* ---------- Form tags ---------- */
+  /* The tag checkboxes are built here; the form itself (display choice,
+     validation, submit, and the under-construction gate) lives in
+     js/journal.js. Tags come from the allowed full-word list only — the
+     Vault rejects anything outside it. */
   var tagGrid = document.getElementById("tag-grid");
   FORM_TAGS.forEach(function (tag) {
     var label = document.createElement("label");
@@ -202,25 +231,6 @@
     label.appendChild(box);
     label.appendChild(document.createTextNode(" " + tag));
     tagGrid.appendChild(label);
-  });
-
-  var aliasInput = document.getElementById("alias-input");
-  document.querySelectorAll('input[name="display"]').forEach(function (radio) {
-    radio.addEventListener("change", function () {
-      aliasInput.disabled = document.querySelector('input[name="display"]:checked').value !== "alias";
-      if (!aliasInput.disabled) { aliasInput.focus(); }
-    });
-  });
-
-  document.getElementById("story-form").addEventListener("submit", function (event) {
-    event.preventDefault();
-    var message = document.getElementById("message-input").value.trim();
-    var consent = document.getElementById("consent-input").checked;
-    var status = document.getElementById("form-status");
-    if (!message) { status.textContent = "Please write your story first — even one sentence is enough."; return; }
-    if (!consent) { status.textContent = "Please check the consent box before sending."; return; }
-    /* LIVE: submissions disabled until the backend lands. Then: POST /stories (see contract above). */
-    status.textContent = "Story submissions aren't open yet. When they open, your story will go to the Vault for review before appearing in the Journal.";
   });
 
   render(current);
