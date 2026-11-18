@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Survivor Journal review queue. Reviewer sign-in required.">
+  <title>Survivor Journal — Review Queue</title>
+  <style>
+    /* Review queue page — standalone tool page. Matches the site palette
+       (dark espresso, cream text, gold accents). No external CSS: this
+       page must work on its own at an unlinked address. */
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a0f0a;
+      color: #fdf5e6;
+      line-height: 1.6;
+      font-size: 18px;
+    }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 24px 18px 120px; }
+    h1 { font-size: 30px; margin: 0 0 6px; color: #fdf5e6; }
+    h2 { font-size: 22px; margin: 0 0 10px; color: #d4af37; }
+    p { margin: 0 0 12px; }
+    .sub { color: #d8c9b4; margin-bottom: 22px; }
+    a { color: #d8b4fe; }
+    .card {
+      background: #2c1b14;
+      border: 1px solid #4a3524;
+      border-radius: 12px;
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+    label { display: block; font-weight: 700; margin: 14px 0 4px; }
+    label:first-child { margin-top: 0; }
+    input[type="text"], input[type="password"], textarea {
+      width: 100%;
+      font: inherit;
+      color: #fdf5e6;
+      background: #1a0f0a;
+      border: 1px solid #4a3524;
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    input:focus, textarea:focus, button:focus-visible {
+      outline: 2px solid #d4af37;
+      outline-offset: 2px;
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    .btn {
+      font: inherit;
+      font-weight: 700;
+      background: #d4af37;
+      color: #1a0f0a;
+      border: none;
+      border-radius: 999px;
+      padding: 11px 26px;
+      cursor: pointer;
+      margin-top: 16px;
+    }
+    .btn:hover, .btn:focus-visible { background: #e5c455; }
+    .btn:disabled { opacity: 0.45; cursor: default; }
+    .btn-ghost {
+      background: transparent;
+      color: #fdf5e6;
+      border: 1px solid #d8c9b4;
+    }
+    .btn-danger {
+      background: #8a3a32;
+      color: #ffd9d4;
+    }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
+    .btn-row .btn { margin-top: 10px; }
+    .error { color: #ffb3ab; margin-top: 12px; min-height: 1.5em; }
+    .ok { color: #c4f0d2; margin-top: 12px; min-height: 1.5em; }
+    .muted { color: #d8c9b4; font-size: 15px; }
+    .small-link {
+      background: none; border: none; cursor: pointer;
+      color: #d8b4fe; text-decoration: underline; padding: 0;
+      font: inherit; font-size: 15px;
+    }
+    .small-link:hover, .small-link:focus-visible { color: #fdf5e6; }
+    /* Queue list */
+    .story-item {
+      display: block; width: 100%; text-align: left;
+      background: #2c1b14; color: #fdf5e6;
+      border: 1px solid #4a3524; border-radius: 10px;
+      padding: 14px 16px; margin-bottom: 10px; cursor: pointer;
+      font: inherit;
+    }
+    .story-item:hover, .story-item:focus-visible { border-color: #d4af37; outline: none; }
+    .story-item .name { font-weight: 700; font-size: 19px; }
+    .story-item .meta { color: #d8c9b4; font-size: 15px; margin-top: 2px; }
+    .badge {
+      display: inline-block; font-size: 13px; font-weight: 700;
+      border-radius: 999px; padding: 2px 10px; margin-left: 8px;
+      vertical-align: middle;
+    }
+    .badge-pending { background: #3a2c10; color: #ffe9b8; }
+    .badge-removal { background: #3a1512; color: #ffd9d4; }
+    .overdue { color: #ffb3ab; font-weight: 700; }
+    /* Story view */
+    .story-message {
+      white-space: pre-wrap; word-wrap: break-word;
+      background: #1a0f0a; border: 1px solid #4a3524; border-radius: 8px;
+      padding: 16px; margin: 12px 0;
+    }
+    .tag { display: inline-block; border: 1px solid #d8b4fe; color: #d8b4fe; border-radius: 999px; padding: 2px 10px; font-size: 14px; margin: 0 6px 6px 0; }
+    .consent-box { border: 1px solid #4a3524; border-radius: 8px; padding: 12px 14px; margin: 12px 0; font-size: 15px; color: #d8c9b4; }
+    /* Setup */
+    .cred { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 16px; }
+    .qr { display: block; max-width: 220px; margin: 14px auto; border: 8px solid #fdf5e6; border-radius: 8px; background: #fdf5e6; }
+    .setup-note { background: #3a2c10; border: 1px solid #8a6f32; color: #ffe9b8; border-radius: 8px; padding: 12px 14px; margin: 12px 0; }
+    /* Floating Exit button — big, always visible, bottom-left. */
+    .exit-btn {
+      position: fixed;
+      left: 18px;
+      bottom: 18px;
+      z-index: 100;
+      font: inherit;
+      font-size: 22px;
+      font-weight: 700;
+      background: #8a3a32;
+      color: #ffd9d4;
+      border: 2px solid #fdf5e6;
+      border-radius: 999px;
+      padding: 14px 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.55);
+    }
+    .exit-btn:hover, .exit-btn:focus-visible { background: #a8443a; outline: 2px solid #fdf5e6; outline-offset: 2px; }
+    /* Request Help — fixed button + panel (js/request-help.js). Bottom-right. */
+    .request-help-btn {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 100;
+      font: inherit;
+      font-size: 20px;
+      font-weight: 700;
+      background: #d4af37;
+      color: #1a0f0a;
+      border: 2px solid #fdf5e6;
+      border-radius: 999px;
+      padding: 12px 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.55);
+    }
+    .request-help-btn:hover, .request-help-btn:focus-visible { background: #e5c455; outline: 2px solid #fdf5e6; outline-offset: 2px; }
+    .request-help-panel {
+      position: fixed;
+      inset: 0;
+      z-index: 101;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 16px;
+    }
+    .request-help-panel[hidden] { display: none; }
+    .request-help-card {
+      background: #2c1b14;
+      color: #fdf5e6;
+      border: 2px solid #d4af37;
+      border-radius: 12px;
+      max-width: 520px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px 26px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    }
+    .request-help-card h2 { color: #d4af37; font-size: 26px; margin: 0 0 10px; }
+    .request-help-card p { margin: 0 0 12px; }
+    .request-help-card a { color: #d8b4fe; }
+    .request-help-card .btn { margin-top: 6px; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Survivor Journal — Review Queue</h1>
+    <p class="sub">Reviewer sign-in required. Stories here are not public until a reviewer approves them.</p>
+  </header>
+
+  <!-- ============ SIGN IN ============ -->
+  <section id="view-login" class="card" aria-labelledby="login-h">
+    <h2 id="login-h">Reviewer sign-in</h2>
+    <form id="login-form" novalidate>
+      <label for="login-username">Username</label>
+      <input type="text" id="login-username" name="login" autocomplete="username" required>
+      <label for="login-password">Password</label>
+      <input type="password" id="login-password" name="password" autocomplete="current-password" required>
+      <label for="login-totp">Authenticator code (6 digits)</label>
+      <input type="text" id="login-totp" name="totpCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required>
+      <button type="submit" class="btn" id="login-btn">Sign in</button>
+      <p class="error" id="login-error" aria-live="polite"></p>
+    </form>
+    <p class="muted">Your username and password were generated when your reviewer account was set up. The code comes from Google Authenticator.</p>
+    <p><button type="button" class="small-link" id="bootstrap-link">Set up the first reviewer account</button></p>
+    <p class="error" id="bootstrap-error" aria-live="polite"></p>
+  </section>
+
+  <!-- ============ ONE-TIME SETUP ============ -->
+  <section id="view-setup" class="card" hidden aria-labelledby="setup-h">
+    <h2 id="setup-h">Your reviewer account</h2>
+    <p>Save these now. They are shown <strong>once</strong> — the server will never show them again.</p>
+    <div id="setup-body">
+      <p class="error" id="setup-error" aria-live="polite"></p>
+    </div>
+    <div id="setup-creds" hidden>
+      <label for="setup-username">Username</label>
+      <input type="text" id="setup-username" class="cred" readonly>
+      <label for="setup-password">Password</label>
+      <input type="text" id="setup-password" class="cred" readonly>
+      <div class="setup-note">
+        Save the username and password in <strong>Google Password Manager</strong>. Do not write them down anywhere else, and do not share them.
+      </div>
+      <p><strong>Google Authenticator:</strong> open the app, tap +, scan this QR code — or enter the secret below by hand.</p>
+      <img id="setup-qr" class="qr" alt="QR code to add this account to Google Authenticator">
+      <label for="setup-secret">Authenticator secret (if you cannot scan the code)</label>
+      <input type="text" id="setup-secret" class="cred" readonly>
+      <button type="button" class="btn" id="setup-done-btn">I've saved it — clear this screen</button>
+      <p class="muted">Clearing removes the username, password, and secret from this screen. After that, sign in above with your new credentials.</p>
+    </div>
+  </section>
+
+  <!-- ============ QUEUE ============ -->
+  <section id="view-queue" hidden aria-labelledby="queue-h">
+    <div class="card">
+      <h2 id="queue-h">Stories waiting for review</h2>
+      <p class="muted" id="queue-count"></p>
+      <div id="queue-list"></div>
+      <p class="error" id="queue-error" aria-live="polite"></p>
+      <div class="btn-row">
+        <button type="button" class="btn btn-ghost" id="refresh-btn">Refresh</button>
+        <button type="button" class="btn btn-ghost" id="signout-btn">Sign out</button>
+      </div>
+    </div>
+
+    <div class="card" id="story-card" hidden aria-labelledby="story-h">
+      <h2 id="story-h">Story</h2>
+      <p class="muted" id="story-meta"></p>
+      <div class="story-message" id="story-message"></div>
+      <div id="story-tags"></div>
+      <div class="consent-box" id="story-consent"></div>
+      <div id="story-actions">
+        <div class="btn-row">
+          <button type="button" class="btn" id="approve-btn">Approve</button>
+          <button type="button" class="btn btn-danger" id="remove-btn">Remove</button>
+        </div>
+        <label for="reject-reason">Reason to hold this story back (required to reject)</label>
+        <textarea id="reject-reason" placeholder="Why is this story being held back? Stored for reviewers only, never published."></textarea>
+        <div class="btn-row">
+          <button type="button" class="btn btn-ghost" id="reject-btn">Hold back (reject)</button>
+        </div>
+      </div>
+      <p class="ok" id="story-status" aria-live="polite"></p>
+    </div>
+  </section>
+
+</div>
+
+<!-- Emergency exit — clears the session and the story, goes to Google. -->
+<button type="button" class="exit-btn" id="exit-btn">Exit</button>
+
+<!-- Request Help — fixed button + panel (js/request-help.js) -->
+<button type="button" id="request-help-btn" class="request-help-btn" aria-haspopup="dialog" aria-controls="request-help-panel" aria-expanded="false">Request Help</button>
+<div id="request-help-panel" class="request-help-panel" role="dialog" aria-modal="true" aria-labelledby="request-help-title" hidden>
+  <div class="request-help-card">
+    <h2 id="request-help-title">Help is available right now</h2>
+    <p>If you're thinking about harming yourself or you're in danger right now, help is available.</p>
+    <p><strong>988 Suicide and Crisis Lifeline</strong><br>Call or text <strong>988</strong><br><a href="https://988lifeline.org" target="_blank" rel="noopener">Chat now at 988lifeline.org</a></p>
+    <p><strong>RAINN National Sexual Assault Hotline</strong><br>Text <strong>HOPE</strong> to <strong>64673</strong>, free, confidential, 24/7<br><a href="https://www.rainn.org" target="_blank" rel="noopener">rainn.org</a></p>
+    <p>If you or someone near you is in immediate danger, call <strong>911</strong>.</p>
+    <button type="button" id="request-help-close" class="btn">Close</button>
+  </div>
+</div>
+
+<script src="../js/request-help.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var API = 'https://strong-bonds-vault.onrender.com';
+  var IDLE_MS = 15 * 60 * 1000; // 15-minute inactivity timeout
+  var token = null; // memory only — never localStorage/sessionStorage
+  var idleTimer = null;
+  var currentStoryId = null;
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  function show(view) {
+    $('view-login').hidden = view !== 'login';
+    $('view-setup').hidden = view !== 'setup';
+    $('view-queue').hidden = view !== 'queue';
+  }
+
+  function setError(el, msg) { el.textContent = msg || ''; }
+
+  function reviewBy(submittedAt) {
+    return new Date(new Date(submittedAt).getTime() + 24 * 60 * 60 * 1000);
+  }
+
+  function fmtDate(d) {
+    try { return new Date(d).toLocaleString(); } catch (e) { return String(d); }
+  }
+
+  function displayName(story) {
+    if (story.displayType === 'first_name' && story.firstName) {
+      return story.firstName + (story.city ? ' — ' + story.city : '');
+    }
+    if (story.displayType === 'alias' && story.alias) return story.alias;
+    return 'Anonymous';
+  }
+
+  // ---- Session: inactivity timer ----
+  function clearIdle() { if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; } }
+  function resetIdle() {
+    clearIdle();
+    if (token) idleTimer = setTimeout(signOutIdle, IDLE_MS);
+  }
+  ['mousemove', 'keydown', 'touchstart', 'click'].forEach(function (ev) {
+    document.addEventListener(ev, resetIdle, { passive: true });
+  });
+
+  function signOut(message) {
+    token = null;
+    clearIdle();
+    currentStoryId = null;
+    $('story-card').hidden = true;
+    $('login-password').value = '';
+    $('login-totp').value = '';
+    setError($('login-error'), message || '');
+    show('login');
+  }
+  function signOutIdle() { signOut('Signed out for inactivity.'); }
+
+  // ---- Emergency exit: clear session + story, go to Google. ----
+  // location.replace() swaps the current history entry, so Back cannot
+  // bring the story back.
+  function exitNow() {
+    token = null;
+    clearIdle();
+    currentStoryId = null;
+    document.body.innerHTML = '';
+    location.replace('https://www.google.com');
+  }
+  $('exit-btn').addEventListener('click', exitNow);
+
+  // ---- API helper ----
+  async function api(path, opts) {
+    opts = opts || {};
+    var headers = { 'Content-Type': 'application/json' };
+    if (token) headers.Authorization = 'Bearer ' + token;
+    var res = await fetch(API + path, {
+      method: opts.method || 'GET',
+      headers: headers,
+      body: opts.body === undefined ? undefined : JSON.stringify(opts.body),
+    });
+    var text = await res.text();
+    var json = null;
+    try { json = JSON.parse(text); } catch (e) { /* non-JSON body */ }
+    if (res.status === 401 && token) {
+      // Sign-in expired or invalid — back to the login screen.
+      signOut('Your sign-in expired. Sign in again.');
+      return null;
+    }
+    return { status: res.status, json: json, text: text };
+  }
+
+  // ---- Sign in ----
+  $('login-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    setError($('login-error'), '');
+    $('login-btn').disabled = true;
+    try {
+      var res = await api('/api/vault/login', {
+        method: 'POST',
+        body: {
+          login: $('login-username').value.trim(),
+          password: $('login-password').value,
+          totpCode: $('login-totp').value.trim(),
+        },
+      });
+      if (!res) return; // 401 handled by api()
+      if (res.status === 200 && res.json && res.json.token) {
+        token = res.json.token;
+        resetIdle();
+        show('queue');
+        await loadList();
+      } else if (res.status === 423) {
+        setError($('login-error'), 'Account locked. Try again later.');
+      } else {
+        setError($('login-error'), 'Sign-in failed. Check your username, password, and code.');
+      }
+    } catch (err) {
+      setError($('login-error'), 'Could not reach the Vault. Check your connection and try again.');
+    } finally {
+      $('login-btn').disabled = false;
+    }
+  });
+
+  $('signout-btn').addEventListener('click', function () { signOut(''); });
+
+  // ---- First-time setup (bootstrap) ----
+  $('bootstrap-link').addEventListener('click', async function () {
+    setError($('bootstrap-error'), '');
+    try {
+      var queueUrl = location.origin + location.pathname;
+      var res = await api('/api/review/bootstrap', { method: 'POST', body: { queueUrl: queueUrl } });
+      if (!res) return;
+      if (res.status === 200 && res.json && res.json.setupLink) {
+        location.href = res.json.setupLink;
+      } else if (res.status === 403) {
+        setError($('bootstrap-error'), 'Reviewer accounts already exist — sign in above.');
+      } else if (res.json && res.json.error) {
+        setError($('bootstrap-error'), res.json.error);
+      } else {
+        setError($('bootstrap-error'), 'Setup could not be started. Try again.');
+      }
+    } catch (err) {
+      setError($('bootstrap-error'), 'Could not reach the Vault. Check your connection and try again.');
+    }
+  });
+
+  // ---- One-time setup (redeem ?setup=<token>) ----
+  async function runSetup() {
+    var params = new URLSearchParams(location.search);
+    var setupToken = params.get('setup');
+    if (!setupToken) { show('login'); return; }
+    show('setup');
+    setError($('setup-error'), '');
+    try {
+      var res = await api('/api/review/setup/' + encodeURIComponent(setupToken), { method: 'POST', body: {} });
+      if (!res) return;
+      if (res.status === 200 && res.json) {
+        $('setup-username').value = res.json.username || '';
+        $('setup-password').value = res.json.password || '';
+        $('setup-secret').value = res.json.totpSecret || '';
+        if (res.json.qrCodeDataUrl) $('setup-qr').src = res.json.qrCodeDataUrl;
+        $('setup-creds').hidden = false;
+      } else if (res.status === 409) {
+        setError($('setup-error'), 'A reviewer account with that label already exists.');
+      } else {
+        setError($('setup-error'), 'That setup link is not valid or has expired.');
+      }
+    } catch (err) {
+      setError($('setup-error'), 'Could not reach the Vault. Check your connection and try again.');
+    }
+  }
+
+  $('setup-done-btn').addEventListener('click', function () {
+    // Clear the displayed credentials from the screen, then go to sign-in.
+    $('setup-username').value = '';
+    $('setup-password').value = '';
+    $('setup-secret').value = '';
+    $('setup-qr').removeAttribute('src');
+    $('setup-creds').hidden = true;
+    // Drop ?setup= from the URL (same origin) so the link cannot be reused from history.
+    history.replaceState(null, '', location.pathname);
+    show('login');
+  });
+
+  // ---- Queue ----
+  async function loadList() {
+    setError($('queue-error'), '');
+    $('queue-list').innerHTML = '';
+    $('story-card').hidden = true;
+    currentStoryId = null;
+    var res = await api('/api/review/stories?status=pending,removal_requested');
+    if (!res) return; // 401 handled by api()
+    if (res.status !== 200 || !res.json) {
+      setError($('queue-error'), 'The queue could not be read right now.');
+      return;
+    }
+    var stories = res.json.stories || [];
+    $('queue-count').textContent = stories.length === 0
+      ? 'Nothing waiting for review.'
+      : stories.length + ' stor' + (stories.length === 1 ? 'y' : 'ies') + ' waiting for review.';
+    var now = Date.now();
+    stories.forEach(function (story) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'story-item';
+      var due = reviewBy(story.submittedAt);
+      var overdue = due.getTime() < now;
+      var badge = story.status === 'removal_requested'
+        ? '<span class="badge badge-removal">removal requested</span>'
+        : '<span class="badge badge-pending">pending</span>';
+      btn.innerHTML = '<span class="name"></span>' + badge +
+        '<div class="meta">Submitted ' + fmtDate(story.submittedAt) +
+        ' · Review by <span class="' + (overdue ? 'overdue' : '') + '">' + fmtDate(due) + '</span></div>';
+      btn.querySelector('.name').textContent = displayName(story);
+      btn.addEventListener('click', function () { loadStory(story.id); });
+      $('queue-list').appendChild(btn);
+    });
+  }
+
+  $('refresh-btn').addEventListener('click', loadList);
+
+  async function loadStory(id) {
+    setError($('story-status'), '');
+    $('reject-reason').value = '';
+    var res = await api('/api/review/stories/' + encodeURIComponent(id));
+    if (!res) return;
+    if (res.status !== 200 || !res.json || !res.json.story) {
+      setError($('queue-error'), 'That story could not be read right now.');
+      return;
+    }
+    var story = res.json.story;
+    currentStoryId = story.id;
+    $('story-h').textContent = displayName(story);
+    $('story-meta').textContent = 'Submitted ' + fmtDate(story.submittedAt) +
+      ' · Review by ' + fmtDate(reviewBy(story.submittedAt)) +
+      ' · Status: ' + story.status;
+    $('story-message').textContent = story.message || '';
+    $('story-tags').innerHTML = '';
+    (story.tags || []).forEach(function (tag) {
+      var span = document.createElement('span');
+      span.className = 'tag';
+      span.textContent = tag;
+      $('story-tags').appendChild(span);
+    });
+    var consent = story.consent || {};
+    $('story-consent').textContent = consent.given
+      ? 'Consent given: "' + (consent.text || '') + '"'
+      : 'No consent record on this story.';
+    $('story-card').hidden = false;
+    $('story-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  async function doAction(kind) {
+    if (!currentStoryId) return;
+    setError($('story-status'), '');
+    var body;
+    if (kind === 'reject') {
+      var reason = $('reject-reason').value.trim();
+      if (!reason) {
+        setError($('story-status'), 'A reason is required to hold a story back.');
+        return;
+      }
+      body = { reason: reason };
+    }
+    try {
+      var res = await api('/api/review/stories/' + encodeURIComponent(currentStoryId) + '/' + kind, {
+        method: 'POST',
+        body: body,
+      });
+      if (!res) return;
+      if (res.status === 200) {
+        var msg = kind === 'approve' ? 'Approved — the story is now public in the Journal.'
+          : kind === 'reject' ? 'Held back — the story will not be published.'
+          : 'Removal requested — the story is hidden while the request is checked.';
+        setError($('story-status'), '');
+        $('story-status').textContent = msg;
+        currentStoryId = null;
+        $('story-card').hidden = true;
+        await loadList();
+      } else if (res.json && res.json.error) {
+        setError($('story-status'), res.json.error);
+      } else {
+        setError($('story-status'), 'That action could not be completed right now.');
+      }
+    } catch (err) {
+      setError($('story-status'), 'Could not reach the Vault. Check your connection and try again.');
+    }
+  }
+
+  $('approve-btn').addEventListener('click', function () { doAction('approve'); });
+  $('reject-btn').addEventListener('click', function () { doAction('reject'); });
+  $('remove-btn').addEventListener('click', function () { doAction('remove'); });
+
+  // ---- Start ----
+  runSetup();
+})();
+</script>
+</body>
+</html>

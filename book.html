@@ -125,6 +125,21 @@
   </footer>
 
 </div>
+
+<!-- Request Help — fixed button + panel (js/request-help.js) -->
+<button type="button" id="request-help-btn" class="request-help-btn" aria-haspopup="dialog" aria-controls="request-help-panel" aria-expanded="false">Request Help</button>
+<div id="request-help-panel" class="request-help-panel" role="dialog" aria-modal="true" aria-labelledby="request-help-title" hidden>
+  <div class="request-help-card">
+    <h2 id="request-help-title">Help is available right now</h2>
+    <p>If you're thinking about harming yourself or you're in danger right now, help is available.</p>
+    <p><strong>988 Suicide and Crisis Lifeline</strong><br>Call or text <strong>988</strong><br><a href="https://988lifeline.org" target="_blank" rel="noopener">Chat now at 988lifeline.org</a></p>
+    <p><strong>RAINN National Sexual Assault Hotline</strong><br>Text <strong>HOPE</strong> to <strong>64673</strong>, free, confidential, 24/7<br><a href="https://www.rainn.org" target="_blank" rel="noopener">rainn.org</a></p>
+    <p>If you or someone near you is in immediate danger, call <strong>911</strong>.</p>
+    <button type="button" id="request-help-close" class="btn">Close</button>
+  </div>
+</div>
+
 <script src="js/book.js"></script>
+<script src="js/request-help.js"></script>
 </body>
 </html>
