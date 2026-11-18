@@ -7,7 +7,3 @@
 # social sharing previews keep working.
 User-agent: meta-externalagent
 Disallow: /
-
-# Review queue page (unlinked, sign-in only): keep crawlers out.
-User-agent: *
-Disallow: /1dng99uom8j22kdq0zxedfj2/
