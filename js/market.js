@@ -271,6 +271,23 @@
   function renderProducts() {
     grid.innerHTML = "";
     var groups = groupProducts(products);
+    /* Marylou (Nov 18, 2026): the Resilience Hoodie is the first
+       thing a shopper sees on the Resilience Market. FEATURED_FIRST
+       lists group keys (the imageUrl folder slug) to pin to the
+       front, in the order listed; everything else keeps the API's
+       order (alphabetical by name). To feature a different product
+       first, add its slug here — no backend or database change. */
+    var FEATURED_FIRST = ["resilience-hoodie"];
+    if (groups.length > 1 && FEATURED_FIRST.length) {
+      var ordered = [];
+      FEATURED_FIRST.forEach(function (key) {
+        groups.forEach(function (g) { if (g.key === key) { ordered.push(g); } });
+      });
+      groups.forEach(function (g) {
+        if (FEATURED_FIRST.indexOf(g.key) < 0) { ordered.push(g); }
+      });
+      groups = ordered;
+    }
     if (groups.length === 0) {
       setStatus("The market is empty right now — products are being added. Check back soon.");
       return;
