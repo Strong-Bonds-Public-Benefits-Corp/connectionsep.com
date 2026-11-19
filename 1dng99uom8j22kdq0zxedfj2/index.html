@@ -34,7 +34,7 @@
     }
     label { display: block; font-weight: 700; margin: 14px 0 4px; }
     label:first-child { margin-top: 0; }
-    input[type="text"], input[type="password"], textarea {
+    input[type="text"], input[type="password"], textarea, select {
       width: 100%;
       font: inherit;
       color: #fdf5e6;
@@ -43,7 +43,7 @@
       border-radius: 8px;
       padding: 10px 12px;
     }
-    input:focus, textarea:focus, button:focus-visible {
+    input:focus, textarea:focus, select:focus, button:focus-visible {
       outline: 2px solid #d4af37;
       outline-offset: 2px;
     }
@@ -241,6 +241,27 @@
       </div>
     </div>
 
+    <!-- ============ ADMIN: ADD A REVIEWER (admins only) ============ -->
+    <div class="card" id="admin-card" hidden aria-labelledby="admin-h">
+      <h2 id="admin-h">Add a reviewer</h2>
+      <p class="muted">Create a one-time setup link for another reviewer. The link is good for 24 hours and can be used once. Send it directly to that person — do not post it anywhere.</p>
+      <label for="admin-label">Reviewer name</label>
+      <input type="text" id="admin-label" placeholder="e.g. Marylou" autocomplete="off">
+      <label for="admin-role">Role</label>
+      <select id="admin-role">
+        <option value="clinician" selected>Clinician — reviews stories</option>
+        <option value="admin">Admin — reviews stories and adds reviewers</option>
+      </select>
+      <div class="btn-row">
+        <button type="button" class="btn" id="admin-create-btn">Create setup link</button>
+      </div>
+      <p class="error" id="admin-error" aria-live="polite"></p>
+      <div id="admin-link-wrap" hidden>
+        <label for="admin-link">Setup link — copy and send it to the reviewer</label>
+        <input type="text" id="admin-link" class="cred" readonly>
+      </div>
+    </div>
+
     <div class="card" id="story-card" hidden aria-labelledby="story-h">
       <h2 id="story-h">Story</h2>
       <p class="muted" id="story-meta"></p>
@@ -332,12 +353,41 @@
     clearIdle();
     currentStoryId = null;
     $('story-card').hidden = true;
+    // Clear the admin card so a setup link never lingers after sign-out.
+    $('admin-card').hidden = true;
+    setError($('admin-error'), '');
+    $('admin-link-wrap').hidden = true;
+    $('admin-link').value = '';
     $('login-password').value = '';
     $('login-totp').value = '';
     setError($('login-error'), message || '');
     show('login');
   }
   function signOutIdle() { signOut('Signed out for inactivity.'); }
+
+  // ---- Admin: show the "Add a reviewer" card only to admins. ----
+  // The JWT payload carries the reviewer's role. Decode it (the payload
+  // is base64, not secret) — the server still enforces admin on the
+  // endpoint, this only controls what the page shows.
+  function jwtRole() {
+    try {
+      if (!token) return null;
+      var parts = token.split('.');
+      if (parts.length !== 3) return null;
+      var b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      while (b64.length % 4) b64 += '=';
+      var payload = JSON.parse(atob(b64));
+      return payload && payload.role ? payload.role : null;
+    } catch (e) { return null; }
+  }
+  function updateAdminCard() {
+    var isAdmin = jwtRole() === 'admin';
+    $('admin-card').hidden = !isAdmin;
+    if (!isAdmin) return;
+    setError($('admin-error'), '');
+    $('admin-link-wrap').hidden = true;
+    $('admin-link').value = '';
+  }
 
   // ---- Emergency exit: clear session + story, go to Google. ----
   // location.replace() swaps the current history entry, so Back cannot
@@ -391,6 +441,7 @@
         token = res.json.token;
         resetIdle();
         show('queue');
+        updateAdminCard();
         await loadList();
       } else if (res.status === 423) {
         setError($('login-error'), 'Account locked. Try again later.');
@@ -424,6 +475,39 @@
       }
     } catch (err) {
       setError($('bootstrap-error'), 'Could not reach the Vault. Check your connection and try again.');
+    }
+  });
+
+  // ---- Admin: create a reviewer setup link ----
+  $('admin-create-btn').addEventListener('click', async function () {
+    setError($('admin-error'), '');
+    $('admin-link-wrap').hidden = true;
+    $('admin-link').value = '';
+    var label = $('admin-label').value.trim();
+    var role = $('admin-role').value;
+    if (!label) { setError($('admin-error'), 'Enter the reviewer name.'); return; }
+    if (role !== 'admin' && role !== 'clinician') { setError($('admin-error'), 'Pick a role.'); return; }
+    $('admin-create-btn').disabled = true;
+    try {
+      var res = await api('/api/review/setup-token', { method: 'POST', body: { label: label, role: role } });
+      if (!res) return; // 401 handled by api()
+      if (res.status === 200 && res.json && res.json.setupLink) {
+        $('admin-link').value = res.json.setupLink;
+        $('admin-link-wrap').hidden = false;
+        $('admin-link').select();
+      } else if (res.status === 403) {
+        setError($('admin-error'), 'Only an admin reviewer can create setup links.');
+      } else if (res.status === 409) {
+        setError($('admin-error'), 'A reviewer account for that name already exists.');
+      } else if (res.json && res.json.error) {
+        setError($('admin-error'), res.json.error);
+      } else {
+        setError($('admin-error'), 'The setup link could not be created. Try again.');
+      }
+    } catch (err) {
+      setError($('admin-error'), 'Could not reach the Vault. Check your connection and try again.');
+    } finally {
+      $('admin-create-btn').disabled = false;
     }
   });
 
